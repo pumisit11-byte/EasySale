@@ -1,2 +1,0 @@
-# Salary-Calculation
-salary
