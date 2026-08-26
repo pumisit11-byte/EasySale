@@ -1,0 +1,3568 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Salary & OT Monthly Calculator</title>
+<!-- นำเข้าฟอนต์ PK Samut Sakhon และฟอนต์สำรอง -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+
+:root {
+--primary-color: #2563eb;
+--primary-light: #eff6ff;
+--bg-color: #f1f5f9;
+--card-bg: #ffffff;
+--card-sub-bg: #f8fafc;
+--text-main: #0f172a;
+--text-sub: #64748b;
+--border-color: #cbd5e1;
+--danger-color: #dc2626;
+--danger-bg: #fef2f2;
+--success-color: #16a34a;
+--success-bg: #f0fdf4;
+--shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+--input-bg: #ffffff;
+color-scheme: light;
+}
+
+[data-theme="dark"] {
+--primary-color: #3b82f6;
+--primary-light: #1e293b;
+--bg-color: #0f172a;
+--card-bg: #1e293b;
+--card-sub-bg: #0f172a;
+--text-main: #f8fafc;
+--text-sub: #94a3b8;
+--border-color: #334155;
+--danger-color: #f87171;
+--danger-bg: #450a0a;
+--success-color: #4ade80;
+--success-bg: #052e16;
+--shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
+--input-bg: #334155;
+color-scheme: dark;
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: 'PK Samut Sakhon', 'Prompt', 'Plus Jakarta Sans', sans-serif;
+-webkit-tap-highlight-color: transparent;
+transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+background-color: var(--bg-color);
+color: var(--text-main);
+padding: 12px;
+display: flex;
+justify-content: center;
+min-height: 100vh;
+}
+
+.container {
+width: 100%;
+max-width: 550px;
+background: var(--card-bg);
+border-radius: 20px;
+padding: 20px 16px 18px 16px;
+box-shadow: var(--shadow-md);
+position: relative;
+}
+
+.top-tools {
+position: absolute;
+top: 14px;
+right: 14px;
+display: flex;
+gap: 6px;
+align-items: center;
+z-index: 10;
+}
+
+.icon-tool-btn {
+border: 1px solid var(--border-color);
+background: var(--card-sub-bg);
+width: 32px;
+height: 32px;
+min-width: 32px;
+min-height: 32px;
+flex: 0 0 32px;
+aspect-ratio: 1 / 1;
+border-radius: 999px;
+padding: 0;
+line-height: 1;
+font-size: 0.9rem;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+}
+
+.lang-switch {
+display: flex;
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 20px;
+padding: 2px;
+}
+
+.lang-btn {
+border: none;
+background: transparent;
+padding: 3px 6px;
+border-radius: 16px;
+font-size: 0.65rem;
+font-weight: 700;
+color: var(--text-sub);
+cursor: pointer;
+}
+
+.lang-btn.active {
+background: var(--primary-color);
+color: #fff;
+}
+
+h1 {
+font-size: 1.2rem;
+font-weight: 800;
+margin-top: 4px;
+margin-bottom: 14px;
+padding-right: 100px;
+color: var(--primary-color);
+line-height: 1.3;
+letter-spacing: -0.02em;
+}
+
+.month-bar {
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 12px;
+padding: 8px;
+margin-bottom: 16px;
+display: flex;
+flex-direction: column;
+gap: 7px;
+width: 100%;
+min-width: 0;
+overflow: hidden;
+}
+
+.month-select-row {
+display: grid;
+grid-template-columns: 38px minmax(0, 1fr) minmax(0, 1fr) 38px 38px;
+gap: 6px;
+align-items: stretch;
+width: 100%;
+min-width: 0;
+}
+
+.month-select-row > * {
+min-width: 0;
+}
+
+.month-nav-btn {
+border: 1px solid var(--border-color);
+background: var(--card-bg);
+color: var(--text-main);
+width: 100%;
+height: 38px;
+border-radius: 8px;
+font-size: 0.9rem;
+font-weight: 700;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+.month-nav-btn:hover {
+background: var(--primary-light);
+border-color: var(--primary-color);
+color: var(--primary-color);
+}
+
+.month-nav-bottom {
+display: flex;
+gap: 8px;
+margin-top: 14px;
+}
+
+.month-nav-bottom .month-nav-btn {
+flex: 1;
+width: auto;
+height: 40px;
+font-size: 0.82rem;
+font-weight: 700;
+gap: 6px;
+}
+
+.period-info-bar {
+background: var(--primary-light);
+border: 1px dashed var(--primary-color);
+border-radius: 10px;
+padding: 7px 10px;
+margin-bottom: 16px;
+margin-top: -8px;
+font-size: 0.7rem;
+font-weight: 600;
+color: var(--primary-color);
+line-height: 1.45;
+}
+
+.month-select, .year-select {
+width: 100%;
+height: 38px;
+min-width: 0;
+padding: 0 8px;
+border-radius: 8px;
+border: 1px solid var(--border-color);
+background: var(--input-bg);
+color: var(--text-main);
+font-size: 0.82rem;
+font-weight: 600;
+outline: none;
+}
+
+.period-setting {
+display: grid;
+grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+align-items: center;
+gap: 8px;
+width: 100%;
+min-width: 0;
+padding: 6px;
+border: 1px solid var(--border-color);
+background: var(--card-bg);
+border-radius: 10px;
+font-size: 0.72rem;
+font-weight: 700;
+}
+
+.cutoff-label-wrap {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 5px;
+height: 38px;
+padding: 0 8px;
+color: var(--text-sub);
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 8px;
+min-width: 0;
+white-space: nowrap;
+}
+
+.cutoff-control {
+display: grid;
+grid-template-columns: minmax(36px, 1fr) 52px minmax(36px, 1fr);
+align-items: center;
+width: 100%;
+height: 38px;
+min-width: 0;
+border: 1px solid var(--border-color);
+background: var(--card-bg);
+border-radius: 8px;
+overflow: hidden;
+box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.cutoff-step-btn {
+width: 100%;
+height: 36px;
+border: none;
+background: var(--card-bg);
+color: var(--primary-color);
+font-size: 1.05rem;
+font-weight: 800;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+line-height: 1;
+}
+
+.cutoff-step-btn:hover {
+background: var(--primary-light);
+}
+
+.cutoff-step-btn:active {
+transform: scale(0.94);
+}
+
+.period-setting input {
+width: 52px;
+height: 36px;
+padding: 0 3px;
+border: none;
+border-left: 1px solid var(--border-color);
+border-right: 1px solid var(--border-color);
+border-radius: 0;
+background: var(--input-bg);
+color: var(--text-main);
+font-size: 0.86rem;
+font-weight: 800;
+text-align: center;
+outline: none;
+-moz-appearance: textfield;
+}
+
+.period-setting input::-webkit-outer-spin-button,
+.period-setting input::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+
+.btn-clear-day {
+margin-top: 7px;
+width: 100%;
+padding: 9px 12px;
+border: 1px solid var(--danger-color);
+background: var(--danger-bg);
+color: var(--danger-color);
+border-radius: 9px;
+font-size: 0.82rem;
+font-weight: 700;
+cursor: pointer;
+}
+
+.btn-clear-day:hover {
+filter: brightness(0.96);
+}
+
+.day-modal-actions {
+display: flex;
+gap: 8px;
+margin-top: 4px;
+}
+
+.day-modal-actions .btn-primary {
+margin-top: 0;
+flex: 1;
+}
+
+.day-modal-actions .btn-clear-day {
+margin-top: 0;
+flex: 1;
+}
+
+.btn-clear-month {
+border: 1px solid var(--border-color);
+background: var(--card-bg);
+width: 100%;
+height: 38px;
+border-radius: 10px;
+font-size: 0.95rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+transition: all 0.2s;
+}
+
+.btn-clear-month:hover {
+background: var(--danger-bg);
+border-color: var(--danger-color);
+}
+
+.section-title {
+font-size: 0.95rem;
+font-weight: 700;
+color: var(--text-main);
+background: var(--primary-light);
+padding: 8px 12px;
+border-radius: 10px;
+margin: 16px 0 12px 0;
+display: flex;
+justify-content: space-between;
+align-items: center;
+letter-spacing: -0.01em;
+}
+
+.cal-header-bar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 10px;
+margin-bottom: 6px;
+gap: 8px;
+}
+
+.toggle-switch-wrapper {
+display: flex;
+align-items: center;
+gap: 4px;
+cursor: pointer;
+user-select: none;
+flex-shrink: 0;
+}
+
+.toggle-switch-label {
+font-size: 0.7rem;
+font-weight: 700;
+color: var(--text-sub);
+white-space: nowrap;
+}
+
+.toggle-switch {
+position: relative;
+width: 34px;
+height: 18px;
+background-color: var(--border-color);
+border-radius: 18px;
+transition: background-color 0.25s ease;
+flex-shrink: 0;
+}
+
+.toggle-switch::after {
+content: '';
+position: absolute;
+top: 2px;
+left: 2px;
+width: 14px;
+height: 14px;
+background-color: #ffffff;
+border-radius: 50%;
+transition: transform 0.25s ease;
+box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.toggle-switch-wrapper.active .toggle-switch {
+background-color: var(--primary-color);
+}
+
+.toggle-switch-wrapper.active .toggle-switch::after {
+transform: translateX(16px);
+}
+
+.calendar-footer-tools {
+display: flex;
+justify-content: flex-end;
+align-items: center;
+gap: 6px;
+margin-top: 8px;
+}
+
+.btn-cal-icon {
+width: 30px;
+height: 30px;
+border-radius: 8px;
+border: 1px solid var(--border-color);
+background: var(--card-bg);
+color: var(--text-main);
+font-size: 0.85rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.btn-cal-icon.danger {
+background: var(--danger-bg);
+color: var(--danger-color);
+border-color: transparent;
+}
+
+.btn-cal-icon.wide {
+width: auto;
+padding: 0 12px;
+font-weight: 700;
+font-size: 0.75rem;
+gap: 4px;
+}
+
+.calendar-wrapper {
+transition: all 0.3s ease;
+}
+.calendar-wrapper.collapsed {
+display: none;
+}
+
+/* Calendar Grid Style */
+.calendar-grid {
+display: grid;
+grid-template-columns: repeat(7, minmax(0, 1fr));
+gap: 4px;
+background: var(--card-sub-bg);
+padding: 8px;
+border-radius: 12px;
+border: 1px solid var(--border-color);
+margin-bottom: 6px;
+}
+
+.cal-header-day {
+text-align: center;
+font-size: 0.7rem;
+font-weight: 700;
+color: var(--text-sub);
+padding: 4px 0;
+min-width: 0;
+white-space: nowrap;
+overflow: hidden;
+}
+
+.cal-day-cell {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 8px;
+min-height: 44px;
+min-width: 0;
+padding: 3px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+cursor: pointer;
+position: relative;
+}
+
+.cal-day-cell.empty {
+background: transparent;
+border: none;
+cursor: default;
+}
+
+.cal-day-num {
+font-size: 0.7rem;
+font-weight: 700;
+}
+
+.cal-day-cell.has-data {
+border-color: var(--primary-color);
+}
+
+.cal-badges {
+display: flex;
+flex-wrap: wrap;
+gap: 2px;
+margin-top: 2px;
+}
+
+.badge {
+font-size: 0.52rem;
+padding: 1px 3px;
+border-radius: 3px;
+font-weight: 700;
+}
+.badge-ot { background: #e0e7ff; color: #4338ca; }
+.badge-inc { background: #dcfce7; color: #15803d; }
+.badge-ns { background: #fef3c7; color: #b45309; }
+.badge-exp { background: #fee2e2; color: #b91c1c; }
+
+
+/* Inline day dropdown editor */
+.cal-day-cell.is-selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 18%, transparent);
+    background: var(--primary-light);
+}
+
+.cal-list-item.is-selected {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.day-dropdown-panel {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: grid-template-rows 0.34s cubic-bezier(.2,.8,.2,1),
+                opacity 0.22s ease,
+                transform 0.34s cubic-bezier(.2,.8,.2,1),
+                margin 0.34s cubic-bezier(.2,.8,.2,1);
+    margin: 0;
+    position: relative;
+    z-index: 4;
+}
+
+.day-dropdown-panel.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transform: translateY(0);
+    margin: 5px 0 7px;
+}
+
+.day-dropdown-inner {
+    min-height: 0;
+    overflow: hidden;
+}
+
+.day-dropdown-panel::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: var(--arrow-left, 50%);
+    width: 13px;
+    height: 13px;
+    background: var(--card-bg);
+    border-left: 1px solid var(--primary-color);
+    border-top: 1px solid var(--primary-color);
+    transform: translateX(-50%) rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.18s ease 0.08s;
+    z-index: 5;
+}
+
+.day-dropdown-panel.open::before {
+    opacity: 1;
+}
+
+.day-dropdown-panel .day-dropdown-card {
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    margin: 0;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 12px;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.10);
+    background: var(--card-bg);
+}
+
+.day-dropdown-panel .modal-header,
+.day-dropdown-panel .day-modal-actions {
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+    background: transparent;
+}
+
+.day-dropdown-panel.list-dropdown {
+    display: grid;
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .day-dropdown-panel {
+        transition: none;
+        transform: none;
+    }
+    .day-dropdown-panel::before {
+        transition: none;
+    }
+}
+
+/* Calendar List / To-Do Style Theme */
+.calendar-list-view {
+display: flex;
+flex-direction: column;
+gap: 6px;
+background: var(--card-sub-bg);
+padding: 8px;
+border-radius: 12px;
+border: 1px solid var(--border-color);
+margin-bottom: 6px;
+max-height: 320px;
+overflow-y: auto;
+}
+
+.cal-list-item {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 8px;
+padding: 8px 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+cursor: pointer;
+font-size: 0.78rem;
+}
+
+.cal-list-item.has-data {
+border-left: 4px solid var(--primary-color);
+}
+
+.cal-list-date {
+font-weight: 700;
+width: 85px;
+color: var(--text-main);
+}
+
+.cal-list-row-data {
+display: flex;
+gap: 8px;
+align-items: center;
+font-weight: 600;
+flex-wrap: wrap;
+justify-content: flex-end;
+}
+
+.list-chip {
+display: inline-flex;
+align-items: center;
+gap: 3px;
+padding: 2px 6px;
+border-radius: 6px;
+font-size: 0.72rem;
+}
+.list-chip.ot { background: #e0e7ff; color: #4338ca; }
+.list-chip.inc { background: #dcfce7; color: #15803d; }
+.list-chip.exp { background: #fee2e2; color: #b91c1c; }
+.list-chip.empty-data { color: var(--text-sub); font-weight: 500; font-style: italic; }
+
+.modal-overlay {
+position: fixed;
+top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.5);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 100;
+padding: 12px;
+}
+
+.modal-card {
+background: var(--card-bg);
+border-radius: 16px;
+width: 100%;
+max-width: 520px;
+padding: 16px;
+box-shadow: var(--shadow-md);
+display: flex;
+flex-direction: column;
+gap: 12px;
+max-height: 92vh;
+overflow-y: auto;
+}
+
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-weight: 700;
+color: var(--primary-color);
+border-bottom: 1px solid var(--border-color);
+padding-bottom: 8px;
+}
+
+.modal-close {
+background: none;
+border: none;
+font-size: 1.2rem;
+cursor: pointer;
+color: var(--text-sub);
+}
+
+.modal-section-title {
+font-size: 0.82rem;
+font-weight: 700;
+color: var(--primary-color);
+margin-top: 4px;
+border-bottom: 1px dashed var(--border-color);
+padding-bottom: 2px;
+}
+
+.stacked-container {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.col-box {
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+padding: 12px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.col-title {
+font-size: 0.82rem;
+font-weight: 700;
+padding-bottom: 6px;
+border-bottom: 1px solid var(--border-color);
+display: flex;
+justify-content: space-between;
+gap: 8px;
+}
+
+.col-title.exp { color: var(--danger-color); }
+.col-title.inc { color: var(--success-color); }
+
+.checkbox-label {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 0.85rem;
+cursor: pointer;
+font-weight: 600;
+}
+
+.group-container {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.input-group-card {
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 14px;
+padding: 12px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.group-header {
+font-size: 0.82rem;
+font-weight: 700;
+color: var(--primary-color);
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 6px;
+}
+
+.group-subtext {
+font-size: 0.72rem;
+color: var(--text-sub);
+font-weight: 600;
+white-space: nowrap;
+}
+
+.group-inputs {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+}
+
+
+    .day-dropdown-panel.open {
+        margin: 4px 0 6px;
+    }
+
+    .day-dropdown-panel .day-dropdown-card {
+        max-width: 100%;
+        max-height: none;
+        margin: 0;
+        padding: 9px;
+        gap: 7px;
+        border-radius: 10px;
+        overflow: visible;
+    }
+
+    .day-dropdown-panel .modal-header {
+        padding-bottom: 5px;
+        font-size: 0.84rem;
+    }
+
+    .day-dropdown-panel .day-modal-actions {
+        padding-top: 3px;
+    }
+
+@media (max-width: 360px) {
+.group-inputs { grid-template-columns: 1fr; }
+}
+
+.input-card {
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+
+.input-card label {
+font-size: 0.72rem;
+font-weight: 600;
+color: var(--text-sub);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.input-card input {
+width: 100%;
+padding: 8px 10px;
+border: 1.5px solid var(--border-color);
+border-radius: 10px;
+font-size: 0.9rem;
+background: var(--input-bg);
+color: var(--text-main);
+outline: none;
+}
+
+.input-card input:read-only {
+background: var(--card-sub-bg);
+color: var(--text-sub);
+border-style: dashed;
+cursor: not-allowed;
+}
+
+.input-card input:focus:not(:read-only) {
+border-color: var(--primary-color);
+}
+
+.dynamic-list {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.dynamic-item {
+display: flex;
+gap: 6px;
+align-items: center;
+}
+
+.dynamic-item input[type="text"],
+.dynamic-item input[type="number"] {
+padding: 6px 8px;
+border: 1px solid var(--border-color);
+border-radius: 8px;
+font-size: 0.8rem;
+background: var(--input-bg);
+color: var(--text-main);
+outline: none;
+}
+
+.dynamic-item input[type="text"] { flex: 1.2; min-width: 0; }
+.dynamic-item input[type="number"] { flex: 1; min-width: 0; }
+
+.btn-del {
+background: var(--danger-bg);
+color: var(--danger-color);
+border: none;
+padding: 6px 8px;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+flex-shrink: 0;
+font-size: 0.75rem;
+}
+
+.btn-add-item {
+padding: 8px 12px;
+background: var(--primary-light);
+color: var(--primary-color);
+border: 1px dashed var(--primary-color);
+border-radius: 8px;
+font-weight: 600;
+font-size: 0.75rem;
+cursor: pointer;
+margin-top: 8px;
+text-align: center;
+display: block;
+width: 100%;
+}
+
+.btn-primary {
+width: 100%;
+padding: 10px;
+background: var(--primary-color);
+color: #ffffff;
+border: none;
+border-radius: 12px;
+font-weight: 700;
+font-size: 0.9rem;
+cursor: pointer;
+margin-top: 4px;
+}
+
+.btn-danger-full {
+width: 100%;
+padding: 11px;
+background: var(--danger-bg);
+color: var(--danger-color);
+border: 1px solid var(--danger-color);
+border-radius: 12px;
+font-weight: 700;
+font-size: 0.85rem;
+cursor: pointer;
+margin-top: 14px;
+}
+
+.btn-danger-full:hover {
+background: var(--danger-color);
+color: #fff;
+}
+
+.summary-dashboard {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-top: 8px;
+}
+
+.summary-block {
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 12px;
+padding: 10px 12px;
+}
+
+.summary-block.income-block {
+border-left: 4px solid var(--success-color);
+}
+
+.summary-block.deduct-block {
+border-left: 4px solid var(--danger-color);
+}
+
+.summary-block.net-block {
+border-left: 4px solid var(--primary-color);
+background: var(--primary-light);
+}
+
+.summary-block-title {
+font-size: 0.78rem;
+font-weight: 700;
+color: var(--text-sub);
+margin-bottom: 6px;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.summary-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 4px 0;
+font-size: 0.82rem;
+gap: 8px;
+}
+
+.summary-row .label {
+color: var(--text-sub);
+}
+
+.summary-row .val {
+font-weight: 600;
+color: var(--text-main);
+white-space: nowrap;
+}
+
+.summary-row.sub-detail {
+font-size: 0.7rem;
+color: var(--text-sub);
+padding-left: 8px;
+border-left: 2px solid var(--border-color);
+margin: 2px 0 4px 0;
+word-break: break-all;
+}
+
+.summary-row.highlight-income {
+font-size: 0.88rem;
+font-weight: 700;
+border-top: 1px dashed var(--border-color);
+padding-top: 6px;
+margin-top: 4px;
+}
+.summary-row.highlight-income .val {
+color: var(--success-color);
+}
+
+.summary-row.highlight-deduct {
+font-size: 0.88rem;
+font-weight: 700;
+border-top: 1px dashed var(--border-color);
+padding-top: 6px;
+margin-top: 4px;
+}
+.summary-row.highlight-deduct .val {
+color: var(--danger-color);
+}
+
+.summary-row.highlight-net {
+font-size: 1rem;
+font-weight: 800;
+border-top: 2px solid var(--primary-color);
+padding-top: 8px;
+margin-top: 6px;
+}
+
+.yearly-card {
+background: var(--card-sub-bg);
+border: 1px solid var(--border-color);
+border-radius: 14px;
+padding: 12px;
+margin-top: 10px;
+}
+
+.yearly-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+margin-bottom: 12px;
+}
+
+.yearly-stat-box {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+padding: 8px 10px;
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.yearly-stat-box label {
+font-size: 0.7rem;
+color: var(--text-sub);
+font-weight: 600;
+}
+
+.yearly-stat-box span {
+font-size: 0.85rem;
+font-weight: 700;
+}
+
+.chart-container {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 10px;
+padding: 12px 8px 8px 8px;
+margin-bottom: 12px;
+position: relative;
+}
+
+.chart-title {
+font-size: 0.75rem;
+font-weight: 700;
+color: var(--text-sub);
+margin-bottom: 8px;
+text-align: center;
+}
+
+.chart-canvas {
+width: 100%;
+height: 200px;
+display: block;
+}
+
+.chart-legend {
+display: flex;
+justify-content: center;
+gap: 10px;
+margin-top: 8px;
+font-size: 0.68rem;
+font-weight: 600;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 4px;
+}
+
+.legend-color {
+width: 9px;
+height: 9px;
+border-radius: 2px;
+}
+
+.table-responsive {
+width: 100%;
+overflow-x: auto;
+border: 1px solid var(--border-color);
+border-radius: 10px;
+}
+
+.yearly-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.75rem;
+text-align: right;
+}
+
+.yearly-table th, .yearly-table td {
+padding: 8px 6px;
+border-bottom: 1px solid var(--border-color);
+white-space: nowrap;
+}
+
+.yearly-table th {
+background: var(--primary-light);
+color: var(--primary-color);
+font-weight: 700;
+text-align: right;
+}
+
+.yearly-table th:first-child, .yearly-table td:first-child {
+text-align: left;
+position: sticky;
+left: 0;
+background: var(--card-bg);
+z-index: 1;
+}
+
+.yearly-table tr:last-child td {
+border-bottom: none;
+}
+
+.breakdown-list {
+display: flex;
+flex-direction: column;
+gap: 4px;
+font-size: 0.78rem;
+}
+
+.breakdown-row {
+display: flex;
+justify-content: space-between;
+padding: 4px 0;
+border-bottom: 1px dashed var(--border-color);
+gap: 8px;
+}
+
+.breakdown-row:last-child {
+border-bottom: none;
+}
+
+/* =========================================================
+   Mobile fixes
+   - ป้องกันช่องตัดรอบล้นกรอบ
+   - ทำปฏิทิน 7 คอลัมน์ให้กว้างเท่ากัน
+   - ย่อ popup และชิดด้านบนบนมือถือ
+   ========================================================= */
+@media (max-width: 520px) {
+    body {
+        padding: 6px;
+    }
+
+    .container {
+        padding: 16px 10px 14px 10px;
+        border-radius: 14px;
+    }
+
+    h1 {
+        padding-right: 92px;
+        font-size: 1.08rem;
+    }
+
+    .month-bar {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .month-select-row {
+        grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) 34px 34px;
+        gap: 4px;
+    }
+
+    .month-select,
+    .year-select {
+        height: 36px;
+        padding: 0 5px;
+        font-size: 0.74rem;
+    }
+
+    .month-select-row .month-nav-btn,
+    .month-select-row .btn-clear-month {
+        height: 36px;
+    }
+
+    .period-setting {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        padding: 5px;
+        gap: 5px;
+    }
+
+    .cutoff-label-wrap,
+    .cutoff-control {
+        height: 36px;
+    }
+
+    .cutoff-label-wrap {
+        padding: 0 5px;
+        font-size: 0.68rem;
+    }
+
+    .cutoff-control {
+        grid-template-columns: minmax(32px, 1fr) 44px minmax(32px, 1fr);
+    }
+
+    .cutoff-step-btn {
+        height: 34px;
+    }
+
+    .period-setting input {
+        width: 44px;
+        height: 34px;
+        padding: 0 2px;
+    }
+
+    .period-info-bar {
+        margin-top: -8px;
+        padding: 7px 8px;
+        font-size: 0.66rem;
+        overflow-wrap: anywhere;
+    }
+
+    .calendar-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 2px;
+        padding: 5px;
+    }
+
+    .cal-header-day {
+        font-size: 0.60rem;
+        padding: 3px 0;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: visible;
+    }
+
+    .cal-day-cell {
+        min-width: 0;
+        min-height: 40px;
+        padding: 2px;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .cal-day-num {
+        font-size: 0.64rem;
+    }
+
+    .cal-badges {
+        gap: 1px;
+    }
+
+    .badge {
+        max-width: 100%;
+        font-size: 0.45rem;
+        padding: 1px 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .modal-overlay {
+        align-items: flex-start;
+        padding: 6px;
+        overflow-y: auto;
+    }
+
+    .modal-card {
+        max-width: 100%;
+        max-height: calc(100dvh - 12px);
+        margin: 0 auto;
+        padding: 10px;
+        gap: 8px;
+        border-radius: 12px;
+    }
+
+    .modal-header {
+        padding-bottom: 6px;
+        font-size: 0.88rem;
+        position: sticky;
+        top: -10px;
+        z-index: 3;
+        background: var(--card-bg);
+    }
+
+    .modal-section-title {
+        font-size: 0.76rem;
+        margin-top: 2px;
+    }
+
+    .modal-card .stacked-container {
+        gap: 8px;
+    }
+
+    .modal-card .col-box {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .modal-card .group-inputs {
+        gap: 6px;
+    }
+
+    .modal-card .input-card input {
+        padding: 7px 8px;
+        font-size: 0.82rem;
+    }
+
+    .modal-card .input-card label,
+    .modal-card .checkbox-label {
+        font-size: 0.75rem;
+    }
+
+    .modal-card .btn-add-item {
+        padding: 7px 8px;
+        margin-top: 5px;
+    }
+
+    .day-modal-actions {
+        position: sticky;
+        bottom: -10px;
+        z-index: 3;
+        background: var(--card-bg);
+        padding-top: 4px;
+    }
+}
+
+@media (max-width: 360px) {
+    .month-select-row {
+        grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1fr) 32px 32px;
+        gap: 3px;
+    }
+
+    .month-select-row .month-nav-btn,
+    .month-select-row .btn-clear-month,
+    .month-select,
+    .year-select {
+        height: 34px;
+    }
+
+    .month-select,
+    .year-select {
+        font-size: 0.68rem;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .cutoff-label-wrap,
+    .cutoff-control {
+        height: 34px;
+    }
+
+    .cutoff-label-wrap {
+        font-size: 0.64rem;
+    }
+
+    .cutoff-control {
+        grid-template-columns: minmax(30px, 1fr) 40px minmax(30px, 1fr);
+    }
+
+    .cutoff-step-btn,
+    .period-setting input {
+        height: 32px;
+    }
+
+    .period-setting input {
+        width: 40px;
+    }
+
+    .calendar-grid {
+        gap: 1px;
+        padding: 4px;
+    }
+
+    .cal-header-day {
+        font-size: 0.56rem;
+    }
+
+    .cal-day-cell {
+        min-height: 38px;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<!-- Top Tools: Theme, Language, Clear Month Icon -->
+<div class="top-tools">
+<button class="icon-tool-btn" id="theme-btn" onclick="toggleTheme()" title="สลับธีม">🌙</button>
+<div class="lang-switch">
+<button class="lang-btn active" id="btn-th" onclick="setLanguage('th')">TH</button>
+<button class="lang-btn" id="btn-en" onclick="setLanguage('en')">EN</button>
+</div>
+</div>
+
+<h1 id="txt_title">Salary & OT Calculator</h1>
+
+<div class="month-bar">
+<div class="month-select-row">
+<button class="month-nav-btn" onclick="goToPrevMonth()" title="เดือนก่อนหน้า">◀</button>
+<select id="year-select" class="year-select" onchange="onMonthOrYearChange()"></select>
+<select id="month-select" class="month-select" onchange="onMonthOrYearChange()"></select>
+<button class="month-nav-btn" onclick="goToNextMonth()" title="เดือนถัดไป">▶</button>
+<button class="btn-clear-month" onclick="confirmClearMonthData()" id="btn_clear_month" title="ล้างข้อมูลเดือนนี้">🗑️</button>
+</div>
+<div class="period-setting" title="กำหนดวันตัดรอบเงินเดือน/OT">
+<div class="cutoff-label-wrap">
+<span>📅</span>
+<span id="lbl_cutoff_day">ตัดรอบ</span>
+<span id="lbl_cutoff_suffix">วัน</span>
+</div>
+<div class="cutoff-control" aria-label="ปรับวันตัดรอบ">
+<button type="button" class="cutoff-step-btn" onclick="adjustPeriodCutoff(-1)" title="ลดวันตัดรอบ" aria-label="ลดวันตัดรอบ">−</button>
+<input type="number" id="period-cutoff-day" min="1" max="31" value="25" onchange="onPeriodCutoffChange()">
+<button type="button" class="cutoff-step-btn" onclick="adjustPeriodCutoff(1)" title="เพิ่มวันตัดรอบ" aria-label="เพิ่มวันตัดรอบ">+</button>
+</div>
+</div>
+</div>
+
+<div class="period-info-bar" id="period-info-bar">
+<span id="lbl_period_range"></span>
+</div>
+
+<div class="section-title" id="txt_sec1">1. เงินเดือน & รายรับอื่นๆ</div>
+<div class="group-container">
+
+<div class="input-group-card">
+<div class="group-header">
+<span id="txt_group_base">💼 เงินเดือนพื้นฐาน</span>
+<span class="group-subtext" id="lbl_base_preview">รวม: 0 บาท</span>
+</div>
+<div class="group-inputs">
+<div class="input-card">
+<label id="lbl_in_salary">เงินเดือน (บาท)</label>
+<input type="number" id="salary" inputmode="decimal" placeholder="0" oninput="saveAndCalculate()">
+</div>
+<div class="input-card">
+<label id="lbl_in_hours">ทำงาน (ชม./วัน)</label>
+<input type="number" id="hours" inputmode="decimal" placeholder="0" oninput="saveAndCalculate()">
+</div>
+</div>
+
+<div class="cal-header-bar">
+<div style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="txt_sec_cal">
+📅 บันทึกการทำงาน & รายวัน
+</div>
+<div class="toggle-switch-wrapper" id="toggle_switch_wrapper" onclick="confirmToggleCalendar()">
+<span class="toggle-switch-label" id="txt_toggle_cal">เปิด</span>
+<div class="toggle-switch"></div>
+</div>
+</div>
+
+<div class="calendar-wrapper collapsed" id="calendar-wrapper">
+<!-- Grid View -->
+<div class="calendar-grid" id="calendar-grid"></div>
+<!-- List View (To-Do style) -->
+<div class="calendar-list-view" id="calendar-list-view" style="display: none;"></div>
+
+<!-- Footer Tools: Switch View & Clear (Moved to Bottom Right) -->
+<div class="calendar-footer-tools">
+<button class="btn-cal-icon" id="btn_switch_theme" onclick="toggleCalendarTheme()" title="สลับมุมมอง">📋</button>
+<button class="btn-cal-icon wide danger" id="btn_clear_cal" onclick="confirmClearCalendar()" title="ล้างข้อมูลปฏิทิน"><span id="txt_btn_clear_cal">ล้าง</span></button>
+</div>
+</div>
+</div>
+
+<div class="input-group-card">
+<div class="group-header">
+<span id="txt_group_ot">⏰ ค่าล่วงเวลา (OT)</span>
+<span class="group-subtext" id="lbl_ot_preview">รวม: 0 บาท</span>
+</div>
+<div class="group-inputs">
+<div class="input-card">
+<label id="lbl_ot1">OT x1.0 (ชม.)</label>
+<input type="number" id="ot1" placeholder="0" oninput="saveAndCalculate()">
+</div>
+<div class="input-card">
+<label id="lbl_ot15">OT x1.5 (ชม.)</label>
+<input type="number" id="ot15" placeholder="0" oninput="saveAndCalculate()">
+</div>
+<div class="input-card">
+<label id="lbl_ot2">OT x2.0 (ชม.)</label>
+<input type="number" id="ot2" placeholder="0" oninput="saveAndCalculate()">
+</div>
+<div class="input-card">
+<label id="lbl_ot3">OT x3.0 (ชม.)</label>
+<input type="number" id="ot3" placeholder="0" oninput="saveAndCalculate()">
+</div>
+</div>
+</div>
+
+<div class="input-group-card">
+<div class="group-header">
+<span id="txt_group_travel">✈️ เบี้ยเลี้ยงเดินทาง</span>
+<span class="group-subtext" id="lbl_travel_preview">รวม: 0 บาท</span>
+</div>
+<div class="group-inputs">
+<div class="input-card">
+<label id="lbl_in_work_days">จำนวนวันเดินทาง (มี OT)</label>
+<input type="number" id="work_days" placeholder="0" oninput="saveAndCalculate()">
+</div>
+<div class="input-card">
+<label id="lbl_in_travel">อัตรา (บาท/วัน)</label>
+<input type="number" id="travel" inputmode="decimal" placeholder="0" oninput="saveAndCalculate()">
+</div>
+</div>
+</div>
+
+<div class="input-group-card">
+<div class="group-header">
+<span id="txt_group_extra">✨ รายได้เพิ่มเติม</span>
+<span class="group-subtext" id="lbl_extra_preview">รวม: 0 บาท</span>
+</div>
+<div class="group-inputs">
+<div class="input-card">
+<label id="lbl_in_lang">ค่าภาษา (บาท)</label>
+<input type="number" id="lang_allowance" inputmode="decimal" placeholder="0" oninput="saveAndCalculate()">
+</div>
+<div class="input-card">
+<label id="lbl_in_night_days">กะกลางคืน (วัน)</label>
+<input type="number" id="night_days" placeholder="0" oninput="saveAndCalculate()">
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="section-title" id="txt_sec_breakdown">2. สรุปจำแนกหมวดหมู่รายรับ-รายจ่าย</div>
+<div class="stacked-container">
+<div class="col-box">
+<div class="col-title exp">
+<span id="txt_bd_exp_title">💸 รายจ่าย (รวม)</span>
+<span id="lbl_sum_bd_exp">0 บาท</span>
+</div>
+<div class="breakdown-list" id="list_bd_exp"></div>
+<div style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 6px;">
+<div style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;" id="txt_add_month_exp">➕ เพิ่มรายจ่ายประจำเดือน</div>
+<div class="dynamic-list" id="month_exp_list"></div>
+<button class="btn-add-item" onclick="addMonthItem('month_exp_list')">+ เพิ่มรายการจ่าย</button>
+</div>
+</div>
+
+<div class="col-box">
+<div class="col-title inc">
+<span id="txt_bd_inc_title">💰 รายรับเพิ่มเติม (รวม)</span>
+<span id="lbl_sum_bd_inc">0 บาท</span>
+</div>
+<div class="breakdown-list" id="list_bd_inc"></div>
+<div style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 6px;">
+<div style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;" id="txt_add_month_inc">➕ เพิ่มรายรับประจำเดือน</div>
+<div class="dynamic-list" id="month_inc_list"></div>
+<button class="btn-add-item" onclick="addMonthItem('month_inc_list')">+ เพิ่มรายการรับ</button>
+</div>
+</div>
+</div>
+
+<div class="section-title" id="txt_sec3">3. สรุปผลคำนวณประจำเดือน</div>
+
+<div class="summary-dashboard">
+<div class="summary-block income-block">
+<div class="summary-block-title" id="txt_block_income_title">🟢 สรุปรายได้ (Income)</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_salary">เงินเดือนฐาน</span>
+<span class="val" id="lbl_salary">-</span>
+</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_ot">รวมค่า OT</span>
+<span class="val" id="lbl_ot">-</span>
+</div>
+<div class="summary-row sub-detail" id="lbl_ot_detail">-</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_travel">เบี้ยเลี้ยงเดินทาง</span>
+<span class="val" id="lbl_travel">-</span>
+</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_night">ค่ากะกลางคืน (50 บ./วัน)</span>
+<span class="val" id="lbl_night">-</span>
+</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_lang">ค่าภาษา</span>
+<span class="val" id="lbl_lang">-</span>
+</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_daily_inc">รายรับเพิ่มเติมอื่นๆ</span>
+<span class="val" id="lbl_daily_inc">-</span>
+</div>
+<div class="summary-row highlight-income">
+<span id="txt_sum_total_income">รวมรายรับทั้งหมด (Gross)</span>
+<span class="val" id="lbl_total_income">-</span>
+</div>
+</div>
+
+<div class="summary-block deduct-block">
+<div class="summary-block-title" id="txt_block_deduct_title">🔴 สรุปการหักค่าใช้จ่าย & ประกันสังคม</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_ss">หัก ประกันสังคม (5%)</span>
+<span class="val" id="lbl_ss" style="color:var(--danger-color);">-</span>
+</div>
+<div class="summary-row">
+<span class="label" id="txt_sum_expense">รวมค่าใช้จ่ายทั้งหมด</span>
+<span class="val" id="lbl_expense" style="color:var(--danger-color);">-</span>
+</div>
+<div class="summary-row highlight-deduct">
+<span id="txt_sum_total_deduct">รวมยอดหักทั้งหมด</span>
+<span class="val" id="lbl_total_deduct">-</span>
+</div>
+</div>
+
+<div class="summary-block net-block">
+<div class="summary-block-title" id="txt_block_net_title">💳 เงินสำหรับใช้จ่ายเดือนนี้</div>
+<div class="summary-row">
+<span class="label" id="txt_net_gross_inc">รายได้สุทธิจากรอบเดือนที่แล้ว</span>
+<span class="val" id="lbl_card_net_inc" style="color:var(--success-color);">-</span>
+</div>
+<div class="summary-row">
+<span class="label" id="txt_net_total_deduct">ค่าใช้จ่ายของเดือนนี้</span>
+<span class="val" id="lbl_card_net_deduct" style="color:var(--danger-color);">-</span>
+</div>
+<div class="summary-row highlight-net">
+<span id="txt_net_final_rem">เงินคงเหลือสำหรับใช้เดือนนี้</span>
+<span class="val" id="lbl_card_net_final">-</span>
+</div>
+</div>
+</div>
+
+<div class="section-title" id="txt_sec4">4. สรุปภาพรวมรายปี <span id="lbl_yearly_title_year"></span></div>
+<div class="yearly-card">
+<div class="yearly-grid">
+<div class="yearly-stat-box">
+<label id="lbl_y_income">รายรับรวมทั้งปี</label>
+<span id="y_val_income" style="color:var(--success-color);">0.00</span>
+</div>
+<div class="yearly-stat-box">
+<label id="lbl_y_expense">รายจ่ายรวมทั้งปี</label>
+<span id="y_val_expense" style="color:var(--danger-color);">0.00</span>
+</div>
+<div class="yearly-stat-box">
+<label id="lbl_y_ss">ประกันสังคมทั้งปี</label>
+<span id="y_val_ss" style="color:var(--danger-color);">0.00</span>
+</div>
+<div class="yearly-stat-box">
+<label id="lbl_y_net">คงเหลือสุทธิทั้งปี</label>
+<span id="y_val_net" style="color:var(--primary-color);">0.00</span>
+</div>
+</div>
+
+<div class="chart-container">
+<div class="chart-title" id="txt_chart_title">📊 กราฟเปรียบเทียบรายรับ-รายจ่าย-คงเหลือ แต่ละเดือน</div>
+<canvas id="yearlyChart" class="chart-canvas"></canvas>
+<div class="chart-legend">
+<div class="legend-item"><div class="legend-color" style="background:#16a34a;"></div><span id="lg_inc">รายรับ</span></div>
+<div class="legend-item"><div class="legend-color" style="background:#dc2626;"></div><span id="lg_exp">รายจ่าย</span></div>
+<div class="legend-item"><div class="legend-color" style="background:#2563eb;"></div><span id="lg_net">คงเหลือ</span></div>
+</div>
+</div>
+
+<div class="table-responsive">
+<table class="yearly-table">
+<thead>
+<tr>
+<th id="th_month">เดือน</th>
+<th id="th_income">รายรับ</th>
+<th id="th_ss">ประกันสังคม</th>
+<th id="th_expense">รายจ่าย</th>
+<th id="th_net">คงเหลือ</th>
+</tr>
+</thead>
+<tbody id="yearly-table-body"></tbody>
+</table>
+</div>
+</div>
+
+<button class="btn-danger-full" onclick="confirmClearAllData()" id="btn_clear_all">🗑️ ล้างข้อมูลทั้งหมด</button>
+</div>
+
+<div id="day-editor-home" style="display: none;">
+<div class="modal-card day-dropdown-card" id="day-editor-card">
+<div class="modal-header">
+<span id="modal-date-title">บันทึกข้อมูลวันที่</span>
+<button class="modal-close" onclick="closeDayModal()">✕</button>
+</div>
+
+<!-- มาทำงาน & กะกลางคืน -->
+<div style="display: flex; gap: 16px; align-items: center; background: var(--card-sub-bg); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color);">
+<label class="checkbox-label">
+<input type="checkbox" id="m_work" onchange="onWorkCheckboxChange()"> <span id="lbl_m_work">มาทำงาน</span>
+</label>
+<label class="checkbox-label">
+<input type="checkbox" id="m_night" onchange="onNightCheckboxChange()"> <span id="lbl_m_night">กะกลางคืน</span>
+</label>
+</div>
+
+<div class="modal-section-title">⏰ ชั่วโมงการทำงานล่วงเวลา (OT)</div>
+<div class="group-inputs">
+<div class="input-card">
+<label>OT x1.0 (ชม.)</label>
+<input type="number" id="m_ot1" inputmode="decimal" placeholder="0" oninput="onModalOtChange()">
+</div>
+<div class="input-card">
+<label>OT x1.5 (ชม.)</label>
+<input type="number" id="m_ot15" inputmode="decimal" placeholder="0" oninput="onModalOtChange()">
+</div>
+<div class="input-card">
+<label>OT x2.0 (ชม.)</label>
+<input type="number" id="m_ot2" inputmode="decimal" placeholder="0" oninput="onModalOtChange()">
+</div>
+<div class="input-card">
+<label>OT x3.0 (ชม.)</label>
+<input type="number" id="m_ot3" inputmode="decimal" placeholder="0" oninput="onModalOtChange()">
+</div>
+</div>
+
+<div class="stacked-container" style="margin-top: 4px;">
+<div class="col-box">
+<div class="col-title exp" id="lbl_m_add_exp_title">💸 รายจ่ายประจำวัน</div>
+<div class="input-card">
+<label id="lbl_m_food">ค่ากิน (บาท)</label>
+<input type="number" id="m_exp_food" inputmode="decimal" placeholder="0">
+</div>
+<div class="input-card">
+<label id="lbl_m_commute">ค่าเดินทาง (บาท)</label>
+<input type="number" id="m_exp_commute" inputmode="decimal" placeholder="0">
+</div>
+<div class="dynamic-list" id="m_exp_list"></div>
+<button class="btn-add-item" onclick="addModalItem('m_exp_list')">+ เพิ่มรายจ่ายอื่น</button>
+</div>
+
+<div class="col-box">
+<div class="col-title inc" id="lbl_m_add_inc_title">💰 รายรับเพิ่มเติม</div>
+<div class="dynamic-list" id="m_inc_list"></div>
+<button class="btn-add-item" onclick="addModalItem('m_inc_list')">+ เพิ่มรายรับอื่น</button>
+</div>
+</div>
+
+<div class="day-modal-actions">
+<button class="btn-primary" onclick="saveDayData()" id="btn_save_day">บันทึกข้อมูล</button>
+<button class="btn-clear-day" onclick="clearDayModalData()" id="btn_clear_day">🗑️ ล้างข้อมูล</button>
+</div>
+</div>
+</div>
+
+<script>
+let currentLang = 'th';
+let selectedDayKey = null;
+let dailyDataMap = {};
+let isCalendarCollapsed = true;
+let calendarViewMode = 'grid'; // 'grid' or 'list'
+
+const monthNames = {
+th: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+};
+
+const monthFullNames = {
+th: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
+en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+};
+
+const dayHeaders = {
+th: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+};
+
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+function dateKey(d) {
+return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+
+// รอบคำนวณเงินเดือน/โอทีแบบกำหนดวันตัดรอบเอง
+// เช่น ตัดรอบวันที่ 25 => 25 เดือนก่อนหน้า ถึง 24 เดือนปัจจุบัน
+// เปลี่ยนวันตัดรอบแล้วข้อมูลรายวันเดิมจะไม่ถูกลบ
+const PERIOD_CUTOFF_KEY = 'salary_ot_period_cutoff_v1';
+const DAILY_GLOBAL_KEY = 'salary_ot_daily_global_v1';
+
+function getPeriodCutoffDay() {
+const saved = parseInt(localStorage.getItem(PERIOD_CUTOFF_KEY));
+if (isNaN(saved)) return 25;
+return Math.min(31, Math.max(1, saved));
+}
+
+function savePeriodCutoffDay() {
+const input = document.getElementById('period-cutoff-day');
+if (!input) return getPeriodCutoffDay();
+let value = parseInt(input.value);
+if (isNaN(value)) value = 25;
+value = Math.min(31, Math.max(1, value));
+input.value = value;
+localStorage.setItem(PERIOD_CUTOFF_KEY, String(value));
+return value;
+}
+
+function daysInMonth(year, month) {
+return new Date(year, month + 1, 0).getDate();
+}
+
+function getPeriodDates(year, month) {
+const cutoff = getPeriodCutoffDay();
+const startDay = Math.min(cutoff, daysInMonth(year, month - 1));
+const start = new Date(year, month - 1, startDay);
+const endDay = cutoff - 1;
+const end = new Date(year, month, endDay);
+const dates = [];
+let cur = new Date(start);
+while (cur <= end) {
+dates.push(new Date(cur));
+cur.setDate(cur.getDate() + 1);
+}
+return dates;
+}
+
+function adjustPeriodCutoff(delta) {
+const input = document.getElementById('period-cutoff-day');
+if (!input) return;
+let value = parseInt(input.value);
+if (isNaN(value)) value = getPeriodCutoffDay();
+value = Math.min(31, Math.max(1, value + delta));
+input.value = value;
+onPeriodCutoffChange();
+}
+
+function onPeriodCutoffChange() {
+selectedDayKey = null;
+savePeriodCutoffDay();
+// โหลดข้อมูลเดิมทั้งหมดกลับมา แล้วเปลี่ยนเฉพาะช่วงวันที่ที่แสดง
+dailyDataMap = getAllStoredDailyData();
+renderCalendar();
+updatePeriodInfoBar();
+if (!isCalendarCollapsed) recalculateMonthlyFromDaily();
+saveCurrentMonthData();
+calculate();
+calculateYearlySummary();
+}
+
+function goToPrevMonth() {
+const yearSelect = document.getElementById('year-select');
+const monthSelect = document.getElementById('month-select');
+let year = parseInt(yearSelect.value);
+let month = parseInt(monthSelect.value);
+month -= 1;
+if (month < 0) {
+month = 11;
+year -= 1;
+}
+if (![...yearSelect.options].some(o => parseInt(o.value) === year)) {
+addYearOption(year);
+}
+yearSelect.value = year;
+monthSelect.value = month;
+onMonthOrYearChange();
+}
+
+function goToNextMonth() {
+const yearSelect = document.getElementById('year-select');
+const monthSelect = document.getElementById('month-select');
+let year = parseInt(yearSelect.value);
+let month = parseInt(monthSelect.value);
+month += 1;
+if (month > 11) {
+month = 0;
+year += 1;
+}
+if (![...yearSelect.options].some(o => parseInt(o.value) === year)) {
+addYearOption(year);
+}
+yearSelect.value = year;
+monthSelect.value = month;
+onMonthOrYearChange();
+}
+
+function addYearOption(year) {
+const yearSelect = document.getElementById('year-select');
+const opt = document.createElement('option');
+opt.value = year;
+opt.textContent = currentLang === 'th' ? `ปี ${year + 543}` : `Year ${year}`;
+const years = [...yearSelect.options].map(o => parseInt(o.value));
+years.push(year);
+years.sort((a, b) => a - b);
+const idx = years.indexOf(year);
+if (idx >= yearSelect.options.length) {
+yearSelect.appendChild(opt);
+} else {
+yearSelect.insertBefore(opt, yearSelect.options[idx]);
+}
+}
+
+// เดือนที่จะ "ใช้" เงินก้อนนี้ คือเดือนถัดไปจากเดือนที่เลือก (label)
+function getSpendMonthLabel(year, month) {
+let sm = month + 1, sy = year;
+if (sm > 11) { sm = 0; sy += 1; }
+return { year: sy, month: sm };
+}
+
+function formatPeriodDate(d, lang) {
+const y = lang === 'th' ? d.getFullYear() + 543 : d.getFullYear();
+return `${d.getDate()} ${monthNames[lang][d.getMonth()]} ${y}`;
+}
+
+function updatePeriodInfoBar(lang = currentLang) {
+const yearEl = document.getElementById('year-select');
+const monthEl = document.getElementById('month-select');
+if (!yearEl || !monthEl || !yearEl.value || monthEl.value === '') return;
+
+const activeLang = translations[lang] ? lang : 'th';
+const t = translations[activeLang];
+const year = parseInt(yearEl.value);
+const month = parseInt(monthEl.value);
+const dates = getPeriodDates(year, month);
+if (!dates.length) return;
+
+const start = dates[0];
+const end = dates[dates.length - 1];
+const spend = getSpendMonthLabel(year, month);
+const spendYearDisplay = activeLang === 'th' ? spend.year + 543 : spend.year;
+const el = document.getElementById('lbl_period_range');
+if (!el) return;
+
+el.innerText =
+`📆 ${t.period_title}: ${formatPeriodDate(start, activeLang)} - ${formatPeriodDate(end, activeLang)} ` +
+`(${t.period_cutoff} ${getPeriodCutoffDay()}) ➜ ${t.period_spending} ${monthFullNames[activeLang][spend.month]} ${spendYearDisplay}`;
+}
+
+function initTheme() {
+const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (prefersDark) {
+document.documentElement.setAttribute('data-theme', 'dark');
+document.getElementById('theme-btn').innerText = '☀️';
+} else {
+document.documentElement.setAttribute('data-theme', 'light');
+document.getElementById('theme-btn').innerText = '🌙';
+}
+}
+
+function toggleTheme() {
+const currentTheme = document.documentElement.getAttribute('data-theme');
+if (currentTheme === 'dark') {
+document.documentElement.setAttribute('data-theme', 'light');
+document.getElementById('theme-btn').innerText = '🌙';
+} else {
+document.documentElement.setAttribute('data-theme', 'dark');
+document.getElementById('theme-btn').innerText = '☀️';
+}
+calculateYearlySummary();
+}
+
+initTheme();
+
+const translations = {
+th: {
+title: "Salary & OT Calculator",
+msg_cleared: "ล้างข้อมูลรอบนี้เรียบร้อยแล้ว",
+msg_cleared_all: "ล้างข้อมูลทั้งหมดเรียบร้อยแล้ว",
+sec_cal: "📅 บันทึกการทำงาน & รายวัน",
+sec1: "1. เงินเดือน & รายรับอื่นๆ",
+sec_breakdown: "2. สรุปจำแนกหมวดหมู่รายรับ-รายจ่าย",
+sec3: "3. เงินสำหรับใช้จ่ายประจำเดือน",
+sec4: "4. สรุปภาพรวมรายปี",
+net_block_title: "💳 เงินสำหรับใช้จ่ายเดือนนี้",
+net_previous_income: "รายได้สุทธิจากรอบเดือนที่แล้ว",
+net_current_expense: "ค่าใช้จ่ายของเดือนนี้",
+net_spending_balance: "เงินคงเหลือสำหรับใช้เดือนนี้",
+group_base: "💼 เงินเดือนพื้นฐาน",
+group_ot: "⏰ ค่าล่วงเวลา (OT)",
+group_travel: "✈️ เบี้ยเลี้ยงเดินทาง",
+group_extra: "✨ รายได้เพิ่มเติม",
+lbl_in_salary: "เงินเดือน (บาท)",
+lbl_in_hours: "ทำงาน (ชม./วัน)",
+lbl_ot1: "OT x1.0 (ชม.)",
+lbl_ot15: "OT x1.5 (ชม.)",
+lbl_ot2: "OT x2.0 (ชม.)",
+lbl_ot3: "OT x3.0 (ชม.)",
+lbl_in_work_days: "จำนวนวันเดินทาง (มี OT)",
+lbl_in_travel: "อัตรา (บาท/วัน)",
+lbl_in_night_days: "กะกลางคืน (วัน)",
+lbl_in_lang: "ค่าภาษา (บาท)",
+item_name: "ชื่อรายการ",
+item_amt: "จำนวนเงิน",
+btn_del: "ลบ",
+block_income_title: "🟢 สรุปรายได้ (Income)",
+block_deduct_title: "🔴 สรุปการหักค่าใช้จ่าย & ประกันสังคม",
+block_net_title: "💳 เงินสำหรับใช้จ่ายเดือนนี้",
+sum_salary: "เงินเดือนฐาน",
+sum_lang: "ค่าภาษา",
+sum_ot: "รวมค่า OT",
+sum_travel: "เบี้ยเลี้ยงเดินทาง",
+sum_night: "ค่ากะกลางคืน (50 บ./วัน)",
+sum_daily_inc: "รายรับเพิ่มเติมอื่นๆ",
+sum_total_income: "รวมรายรับทั้งหมด (Gross)",
+sum_ss: "หัก ประกันสังคม (5%)",
+sum_expense: "รวมค่าใช้จ่ายทั้งหมด",
+sum_total_deduct: "รวมยอดหักทั้งหมด",
+net_gross_inc: "รายได้สุทธิจากรอบเดือนที่แล้ว",
+net_total_deduct: "ค่าใช้จ่ายของเดือนนี้",
+net_final_rem: "เงินคงเหลือสำหรับใช้เดือนนี้",
+total_prefix: "รวม: ",
+currency: " บาท",
+lbl_y_income: "รายรับที่ได้รับรวมทั้งปี",
+lbl_y_ss: "ประกันสังคมที่หักทั้งปี",
+lbl_y_expense: "รายจ่ายรวมทั้งปี",
+lbl_y_net: "คงเหลือสุทธิทั้งปี",
+chart_title: "📊 กราฟเปรียบเทียบรายรับ-รายจ่าย-คงเหลือ แต่ละเดือน",
+lg_inc: "รายรับ",
+lg_exp: "รายจ่าย",
+lg_net: "คงเหลือ",
+th_month: "เดือน",
+th_income: "รายรับ",
+th_ss: "ประกันสังคม",
+th_expense: "รายจ่าย",
+th_net: "คงเหลือ",
+lbl_m_work: "มาทำงาน",
+lbl_m_night: "กะกลางคืน",
+lbl_m_food: "ค่ากิน (บาท)",
+lbl_m_commute: "ค่าเดินทาง (บาท)",
+lbl_m_add_exp_title: "💸 รายจ่ายประจำวัน",
+lbl_m_add_inc_title: "💰 รายรับเพิ่มเติม",
+btn_save_day: "บันทึกข้อมูล",
+btn_clear_day: "🗑️ ล้างข้อมูล",
+lbl_cutoff_day: "ตัดรอบ",
+lbl_cutoff_suffix: "วัน",
+period_title: "รอบคำนวณเงินเดือน/โอที",
+period_cutoff: "ตัดรอบวันที่",
+period_spending: "ใช้จ่ายเดือน",
+toggle_cal_text: "เปิด",
+toggle_cal_off: "ปิด",
+txt_bd_exp_title: "💸 รายจ่าย (รวม)",
+txt_bd_inc_title: "💰 รายรับเพิ่มเติม (รวม)",
+txt_add_month_exp: "➕ เพิ่มรายจ่ายประจำรอบ",
+txt_add_month_inc: "➕ เพิ่มรายรับประจำรอบ",
+food_default: "ค่าอาหาร",
+commute_default: "ค่าเดินทาง",
+btn_clear_cal: "ล้าง",
+nav_prev: "เดือนก่อนหน้า",
+nav_next: "เดือนถัดไป",
+btn_clear_all: "🗑️ ล้างข้อมูลทั้งหมด",
+confirm_clear_month: "คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมดในรอบนี้?",
+confirm_clear_day: "คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลของวันนี้?",
+confirm_clear_cal: "คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลในบันทึกทั้งหมดของรอบนี้?",
+confirm_clear_all: "⚠️ คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมดของทุกเดือนทุกปี? การกระทำนี้ไม่สามารถย้อนกลับได้",
+confirm_open_cal: "⚠️ คำเตือน: การเปิดใช้งานโหมดบันทึกรายวันจะทำให้ข้อมูลชั่วโมง OT, วันทำงาน และกะกลางคืนที่กรอกไว้เดิมถูกล้างและแทนที่ด้วยข้อมูลรายวัน คุณต้องการเปิดหรือไม่?",
+confirm_toggle_off: "เมื่อปิดโหมดนี้ ระบบจะล้างค่าบันทึกรายวันและค่าที่เกี่ยวข้องออกทั้งหมด ยืนยันปิดหรือไม่?"
+},
+en: {
+title: "Salary & OT Calculator",
+msg_cleared: "Cleared data for this period",
+msg_cleared_all: "All data has been cleared",
+sec_cal: "📅 Work & Daily Log",
+sec1: "1. Salary & Other Income",
+sec_breakdown: "2. Income & Expense Categorization Summary",
+sec3: "3. Period Summary",
+sec4: "4. Yearly Overview",
+net_block_title: "💳 Money Available for This Month",
+net_previous_income: "Net income from previous pay period",
+net_current_expense: "Expenses for this month",
+net_spending_balance: "Money remaining for this month",
+group_base: "💼 Base Salary",
+group_ot: "⏰ Overtime (OT)",
+group_travel: "✈️ Travel Allowance",
+group_extra: "✨ Additional Allowance",
+lbl_in_salary: "Salary (THB)",
+lbl_in_hours: "Work (hrs/day)",
+lbl_ot1: "OT x1.0 (hrs)",
+lbl_ot15: "OT x1.5 (hrs)",
+lbl_ot2: "OT x2.0 (hrs)",
+lbl_ot3: "OT x3.0 (hrs)",
+lbl_in_work_days: "Travel Days (With OT)",
+lbl_in_travel: "Rate (THB/day)",
+lbl_in_night_days: "Night Shift (Days)",
+lbl_in_lang: "Language Allowance",
+item_name: "Item Name",
+item_amt: "Amount",
+btn_del: "Delete",
+block_income_title: "🟢 Gross Income Summary",
+block_deduct_title: "🔴 Deductions & Expenses",
+block_net_title: "💳 Period Net Balance",
+sum_salary: "Base Salary",
+sum_lang: "Language Allowance",
+sum_ot: "Total OT",
+sum_travel: "Travel Allowance",
+sum_night: "Night Shift (50 THB/day)",
+sum_daily_inc: "Other Extra Incomes",
+sum_total_income: "Total Gross Income",
+sum_ss: "Social Security (5%)",
+sum_expense: "Total Expenses",
+sum_total_deduct: "Total Deductions",
+net_gross_inc: "Total Gross Income",
+net_total_deduct: "Expenses for this month",
+net_final_rem: "Money remaining for this month",
+total_prefix: "Total: ",
+currency: " THB",
+lbl_y_income: "Total Income Received This Year",
+lbl_y_ss: "Social Security Withheld This Year",
+lbl_y_expense: "Yearly Total Expense",
+lbl_y_net: "Yearly Net Balance",
+chart_title: "📊 Income / Expense / Net Chart by Period",
+lg_inc: "Income",
+lg_exp: "Expense",
+lg_net: "Net Balance",
+th_month: "Month",
+th_income: "Income",
+th_ss: "Soc.Sec",
+th_expense: "Expense",
+th_net: "Balance",
+lbl_m_work: "Present",
+lbl_m_night: "Night Shift",
+lbl_m_food: "Food (THB)",
+lbl_m_commute: "Commute (THB)",
+lbl_m_add_exp_title: "💸 Daily Expenses",
+lbl_m_add_inc_title: "💰 Extra Incomes",
+btn_save_day: "Save Data",
+btn_clear_day: "🗑️ Clear Data",
+lbl_cutoff_day: "Cut-off",
+lbl_cutoff_suffix: "day",
+period_title: "Salary / OT Pay Period",
+period_cutoff: "Cut-off day",
+period_spending: "Spending money for",
+toggle_cal_text: "On",
+toggle_cal_off: "Off",
+txt_bd_exp_title: "💸 Expenses (Total)",
+txt_bd_inc_title: "💰 Extra Incomes (Total)",
+txt_add_month_exp: "➕ Add Expense for This Period",
+txt_add_month_inc: "➕ Add Income for This Period",
+food_default: "Food",
+commute_default: "Commute",
+btn_clear_cal: "Clear",
+nav_prev: "Previous Month",
+nav_next: "Next Month",
+btn_clear_all: "🗑️ Clear All Data",
+confirm_clear_month: "Are you sure you want to clear all data for this period?",
+confirm_clear_day: "Are you sure you want to clear all data for this day?",
+confirm_clear_cal: "Are you sure you want to clear all log records for this period?",
+confirm_clear_all: "⚠️ Are you sure you want to clear ALL data for every month and year? This cannot be undone.",
+confirm_open_cal: "⚠️ Warning: Turning on daily log mode will clear existing manual OT and work day inputs and replace them with log records. Turn on?",
+confirm_toggle_off: "Turning off log mode will clear all log records and related inputs. Turn off?"
+}
+};
+
+function initYearMonthDropdowns() {
+const cutoffInput = document.getElementById('period-cutoff-day');
+if (cutoffInput) cutoffInput.value = getPeriodCutoffDay();
+
+const yearSelect = document.getElementById('year-select');
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth();
+
+yearSelect.innerHTML = '';
+for (let y = currentYear - 3; y <= currentYear + 3; y++) {
+const opt = document.createElement('option');
+opt.value = y;
+opt.textContent = currentLang === 'th' ? `ปี ${y + 543}` : `Year ${y}`;
+if (y === currentYear) opt.selected = true;
+yearSelect.appendChild(opt);
+}
+
+renderMonthOptions(currentMonth);
+}
+
+function renderMonthOptions(selectedMonth = 0) {
+const monthSelect = document.getElementById('month-select');
+monthSelect.innerHTML = '';
+monthFullNames[currentLang].forEach((m, idx) => {
+const opt = document.createElement('option');
+opt.value = idx;
+opt.textContent = m;
+if (idx === selectedMonth) opt.selected = true;
+monthSelect.appendChild(opt);
+});
+}
+
+function setLanguage(lang) {
+currentLang = lang;
+document.getElementById('btn-th').classList.toggle('active', lang === 'th');
+document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+const t = translations[lang];
+
+document.getElementById('txt_title').innerText = t.title;
+document.getElementById('txt_sec_cal').innerText = t.sec_cal;
+
+document.getElementById('txt_sec1').innerText = t.sec1;
+document.getElementById('txt_sec_breakdown').innerText = t.sec_breakdown;
+document.getElementById('txt_sec3').innerText = t.sec3;
+document.getElementById('txt_sec4').innerText = t.sec4;
+
+document.getElementById('txt_group_base').innerText = t.group_base;
+document.getElementById('txt_group_ot').innerText = t.group_ot;
+document.getElementById('txt_group_travel').innerText = t.group_travel;
+document.getElementById('txt_group_extra').innerText = t.group_extra;
+
+
+document.getElementById('lbl_in_salary').innerText = t.lbl_in_salary;
+document.getElementById('lbl_in_hours').innerText = t.lbl_in_hours;
+
+document.getElementById('lbl_ot1').innerText = t.lbl_ot1;
+document.getElementById('lbl_ot15').innerText = t.lbl_ot15;
+document.getElementById('lbl_ot2').innerText = t.lbl_ot2;
+document.getElementById('lbl_ot3').innerText = t.lbl_ot3;
+
+document.getElementById('lbl_in_work_days').innerText = t.lbl_in_work_days;
+document.getElementById('lbl_in_travel').innerText = t.lbl_in_travel;
+document.getElementById('lbl_in_night_days').innerText = t.lbl_in_night_days;
+document.getElementById('lbl_in_lang').innerText = t.lbl_in_lang;
+
+document.getElementById('lbl_m_work').innerText = t.lbl_m_work;
+document.getElementById('lbl_m_night').innerText = t.lbl_m_night;
+document.getElementById('lbl_m_food').innerText = t.lbl_m_food;
+document.getElementById('lbl_m_commute').innerText = t.lbl_m_commute;
+document.getElementById('lbl_m_add_exp_title').innerText = t.lbl_m_add_exp_title;
+document.getElementById('lbl_m_add_inc_title').innerText = t.lbl_m_add_inc_title;
+document.getElementById('btn_save_day').innerText = t.btn_save_day;
+document.getElementById('btn_clear_day').innerText = t.btn_clear_day;
+document.getElementById('lbl_cutoff_day').innerText = t.lbl_cutoff_day;
+document.getElementById('lbl_cutoff_suffix').innerText = t.lbl_cutoff_suffix;
+
+document.getElementById('txt_toggle_cal').innerText = isCalendarCollapsed ? t.toggle_cal_off : t.toggle_cal_text;
+
+document.getElementById('txt_btn_clear_cal').innerText = t.btn_clear_cal;
+document.getElementById('txt_nav_prev_bottom').innerText = t.nav_prev;
+document.getElementById('txt_nav_next_bottom').innerText = t.nav_next;
+document.getElementById('btn_clear_all').innerHTML = t.btn_clear_all;
+
+document.getElementById('txt_bd_exp_title').innerText = t.txt_bd_exp_title;
+document.getElementById('txt_bd_inc_title').innerText = t.txt_bd_inc_title;
+document.getElementById('txt_add_month_exp').innerText = t.txt_add_month_exp;
+document.getElementById('txt_add_month_inc').innerText = t.txt_add_month_inc;
+
+document.getElementById('txt_block_income_title').innerText = t.block_income_title;
+document.getElementById('txt_block_deduct_title').innerText = t.block_deduct_title;
+document.getElementById('txt_block_net_title').innerText = t.block_net_title;
+
+document.getElementById('txt_sum_salary').innerText = t.sum_salary;
+document.getElementById('txt_sum_lang').innerText = t.sum_lang;
+document.getElementById('txt_sum_ot').innerText = t.sum_ot;
+document.getElementById('txt_sum_travel').innerText = t.sum_travel;
+document.getElementById('txt_sum_night').innerText = t.sum_night;
+document.getElementById('txt_sum_daily_inc').innerText = t.sum_daily_inc;
+document.getElementById('txt_sum_total_income').innerText = t.sum_total_income;
+document.getElementById('txt_sum_ss').innerText = t.sum_ss;
+document.getElementById('txt_sum_expense').innerText = t.sum_expense;
+document.getElementById('txt_sum_total_deduct').innerText = t.sum_total_deduct;
+
+document.getElementById('txt_net_gross_inc').innerText = t.net_gross_inc;
+document.getElementById('txt_net_total_deduct').innerText = t.net_total_deduct;
+document.getElementById('txt_net_final_rem').innerText = t.net_final_rem;
+
+document.getElementById('lbl_y_income').innerText = t.lbl_y_income;
+document.getElementById('lbl_y_ss').innerText = t.lbl_y_ss;
+document.getElementById('lbl_y_expense').innerText = t.lbl_y_expense;
+document.getElementById('lbl_y_net').innerText = t.lbl_y_net;
+
+document.getElementById('txt_chart_title').innerText = t.chart_title;
+document.getElementById('lg_inc').innerText = t.lg_inc;
+document.getElementById('lg_exp').innerText = t.lg_exp;
+document.getElementById('lg_net').innerText = t.lg_net;
+
+document.getElementById('th_month').innerText = t.th_month;
+document.getElementById('th_income').innerText = t.th_income;
+document.getElementById('th_ss').innerText = t.th_ss;
+document.getElementById('th_expense').innerText = t.th_expense;
+document.getElementById('th_net').innerText = t.th_net;
+
+const selMonth = parseInt(document.getElementById('month-select').value) || 0;
+renderMonthOptions(selMonth);
+
+const yearSelect = document.getElementById('year-select');
+Array.from(yearSelect.options).forEach(opt => {
+const y = parseInt(opt.value);
+opt.textContent = lang === 'th' ? `ปี ${y + 543}` : `Year ${y}`;
+});
+
+const cutoffInput = document.getElementById('period-cutoff-day');
+if (cutoffInput) cutoffInput.value = getPeriodCutoffDay();
+
+// รีเฟรชข้อความรอบคำนวณทันทีด้วยภาษาที่เลือก
+updatePeriodInfoBar(lang);
+
+loadCurrentMonthData();
+
+// ป้องกันข้อความ/หัวปฏิทินค้างเป็นภาษาเดิมบนบาง browser มือถือ
+updatePeriodInfoBar(lang);
+renderCalendar();
+calculateYearlySummary();
+}
+
+const STORAGE_KEY_PREFIX = 'calc_data_v7_';
+
+function toggleCalendarTheme() {
+calendarViewMode = calendarViewMode === 'grid' ? 'list' : 'grid';
+renderCalendar();
+}
+
+function rehomeDayEditor() {
+const home = document.getElementById('day-editor-home');
+const card = document.getElementById('day-editor-card');
+if (home && card && card.parentElement !== home) home.appendChild(card);
+}
+
+function createDayDropdownPanel(arrowColumn = 3, listMode = false) {
+const panel = document.createElement('div');
+panel.className = 'day-dropdown-panel' + (listMode ? ' list-dropdown' : '');
+panel.id = 'day-dropdown-panel';
+const arrowLeft = listMode ? 50 : ((arrowColumn + 0.5) / 7) * 100;
+panel.style.setProperty('--arrow-left', `${arrowLeft}%`);
+
+const inner = document.createElement('div');
+inner.className = 'day-dropdown-inner';
+inner.id = 'day-dropdown-inner';
+panel.appendChild(inner);
+
+const card = document.getElementById('day-editor-card');
+if (card) inner.appendChild(card);
+
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => panel.classList.add('open'));
+});
+return panel;
+}
+
+function renderCalendar() {
+const grid = document.getElementById('calendar-grid');
+const listView = document.getElementById('calendar-list-view');
+
+// ย้าย editor กลับบ้านก่อนล้าง DOM เพื่อไม่ให้ฟอร์มหาย
+rehomeDayEditor();
+grid.innerHTML = '';
+listView.innerHTML = '';
+
+const year = parseInt(document.getElementById('year-select').value);
+const month = parseInt(document.getElementById('month-select').value);
+const periodDates = getPeriodDates(year, month);
+
+if (calendarViewMode === 'grid') {
+grid.style.display = 'grid';
+listView.style.display = 'none';
+document.getElementById('btn_switch_theme').innerHTML = '📋';
+
+dayHeaders[currentLang].forEach(h => {
+const el = document.createElement('div');
+el.className = 'cal-header-day';
+el.innerText = h;
+grid.appendChild(el);
+});
+
+const firstDate = periodDates[0];
+const firstDayIndex = firstDate.getDay();
+for (let i = 0; i < firstDayIndex; i++) {
+const emptyCell = document.createElement('div');
+emptyCell.className = 'cal-day-cell empty';
+grid.appendChild(emptyCell);
+}
+
+const selectedIndex = selectedDayKey ? periodDates.findIndex(d => dateKey(d) === selectedDayKey) : -1;
+const selectedWeek = selectedIndex >= 0 ? Math.floor((firstDayIndex + selectedIndex) / 7) : -1;
+
+periodDates.forEach((date, dateIndex) => {
+const key = dateKey(date);
+const cell = document.createElement('div');
+const dayData = dailyDataMap[key];
+const isSelected = key === selectedDayKey;
+
+cell.className = 'cal-day-cell' + (dayData ? ' has-data' : '') + (isSelected ? ' is-selected' : '');
+cell.onclick = () => openDayModal(date);
+
+let badgesHtml = '';
+if (dayData) {
+if (dayData.work && !dayData.night && !hasOt(dayData)) badgesHtml += `<span class="badge badge-inc">ทำงาน</span>`;
+if (dayData.night) badgesHtml += `<span class="badge badge-ns">🌙</span>`;
+
+const totalOtHrs = (parseFloat(dayData.ot1)||0) + (parseFloat(dayData.ot15)||0) + (parseFloat(dayData.ot2)||0) + (parseFloat(dayData.ot3)||0);
+if (totalOtHrs > 0) badgesHtml += `<span class="badge badge-ot">OT:${totalOtHrs}h</span>`;
+
+let dayExp = (parseFloat(dayData.expFood)||0) + (parseFloat(dayData.expCommute)||0);
+if (dayData.extraExpenses && Array.isArray(dayData.extraExpenses)) {
+dayData.extraExpenses.forEach(x => dayExp += (parseFloat(x.amount)||0));
+}
+if (dayExp > 0) badgesHtml += `<span class="badge badge-exp">-${dayExp}</span>`;
+
+let dayInc = 0;
+if (dayData.extraIncomes && Array.isArray(dayData.extraIncomes)) {
+dayData.extraIncomes.forEach(x => dayInc += (parseFloat(x.amount)||0));
+}
+if (dayInc > 0) badgesHtml += `<span class="badge badge-inc">+${dayInc}</span>`;
+}
+
+const isOutsidePeriodMonth = date.getMonth() !== month;
+const dayLabelHtml = isOutsidePeriodMonth
+? `${date.getDate()}<small style="font-size:0.5rem; opacity:0.65; margin-left:2px;">${monthNames[currentLang][date.getMonth()]}</small>`
+: `${date.getDate()}`;
+
+cell.innerHTML = `
+<span class="cal-day-num">${dayLabelHtml}</span>
+<div class="cal-badges">${badgesHtml}</div>
+`;
+grid.appendChild(cell);
+
+// วาง dropdown หลังสุดของแถวสัปดาห์ที่มีวันที่เลือกอยู่
+const gridPosition = firstDayIndex + dateIndex;
+const currentWeek = Math.floor(gridPosition / 7);
+const isWeekEnd = (gridPosition % 7 === 6) || dateIndex === periodDates.length - 1;
+if (selectedWeek >= 0 && currentWeek === selectedWeek && isWeekEnd) {
+    const selectedColumn = (firstDayIndex + selectedIndex) % 7;
+    grid.appendChild(createDayDropdownPanel(selectedColumn, false));
+}
+});
+} else {
+// โหมด To-Do List ลำดับใหม่: รายรับ ➔ รายจ่าย ➔ OT (ไม่ใส่คำว่า OT, รับ, จ่าย ถ้าไม่มีข้อมูล)
+grid.style.display = 'none';
+listView.style.display = 'flex';
+document.getElementById('btn_switch_theme').innerHTML = '🔲';
+
+periodDates.forEach(date => {
+const key = dateKey(date);
+const item = document.createElement('div');
+const dayData = dailyDataMap[key];
+const dayOfWeek = dayHeaders[currentLang][date.getDay()];
+
+const isSelected = key === selectedDayKey;
+item.className = 'cal-list-item' + (dayData ? ' has-data' : '') + (isSelected ? ' is-selected' : '');
+item.onclick = () => openDayModal(date);
+
+let incChip = '';
+let expChip = '';
+let otChip = '';
+
+if (dayData) {
+// 1. รายรับ
+let dayInc = 0;
+if (dayData.extraIncomes) dayData.extraIncomes.forEach(x => dayInc += (parseFloat(x.amount)||0));
+if (dayInc > 0) {
+incChip = `<span class="list-chip inc">💰 +${formatNum(dayInc)}</span>`;
+}
+
+// 2. รายจ่าย
+let dayExp = (parseFloat(dayData.expFood)||0) + (parseFloat(dayData.expCommute)||0);
+if (dayData.extraExpenses) dayData.extraExpenses.forEach(x => dayExp += (parseFloat(x.amount)||0));
+if (dayExp > 0) {
+expChip = `<span class="list-chip exp">💸 -${formatNum(dayExp)}</span>`;
+}
+
+// 3. OT / กะ
+const totalOtHrs = (parseFloat(dayData.ot1)||0) + (parseFloat(dayData.ot15)||0) + (parseFloat(dayData.ot2)||0) + (parseFloat(dayData.ot3)||0);
+if (totalOtHrs > 0 || dayData.night || dayData.work) {
+let textStr = [];
+if (dayData.work && !dayData.night && totalOtHrs === 0) textStr.push("ทำงาน");
+if (dayData.night) textStr.push("🌙 กะคืน");
+if (totalOtHrs > 0) textStr.push(`${totalOtHrs} ชม.`);
+
+if (textStr.length > 0) {
+otChip = `<span class="list-chip ot">⏱️ ${textStr.join(' / ')}</span>`;
+}
+}
+}
+
+const hasAnyInfo = incChip !== '' || expChip !== '' || otChip !== '';
+const rowDataHtml = hasAnyInfo ? `${incChip}${expChip}${otChip}` : `<span class="list-chip empty-data">-</span>`;
+
+item.innerHTML = `
+<span class="cal-list-date">${date.getDate()} ${monthNames[currentLang][date.getMonth()]} (${dayOfWeek})</span>
+<div class="cal-list-row-data">
+${rowDataHtml}
+</div>
+`;
+listView.appendChild(item);
+if (isSelected) {
+    listView.appendChild(createDayDropdownPanel(3, true));
+}
+});
+}
+}
+
+function hasOt(d) {
+return (parseFloat(d.ot1)||0) > 0 || (parseFloat(d.ot15)||0) > 0 || (parseFloat(d.ot2)||0) > 0 || (parseFloat(d.ot3)||0) > 0;
+}
+
+function confirmToggleCalendar() {
+const t = translations[currentLang];
+
+if (!isCalendarCollapsed) {
+if (confirm(t.confirm_toggle_off)) {
+dailyDataMap = {};
+clearCalendarCalculatedInputs();
+toggleCalendarUI(true);
+}
+} else {
+if (confirm(t.confirm_open_cal)) {
+toggleCalendarUI(false);
+}
+}
+}
+
+function clearCalendarCalculatedInputs() {
+const fields = ['ot1', 'ot15', 'ot2', 'ot3', 'work_days', 'night_days'];
+fields.forEach(id => {
+document.getElementById(id).value = '';
+});
+}
+
+function toggleCalendarUI(collapse) {
+isCalendarCollapsed = collapse;
+const wrapper = document.getElementById('calendar-wrapper');
+const switchWrapper = document.getElementById('toggle_switch_wrapper');
+const t = translations[currentLang];
+
+const readonlyFields = ['ot1', 'ot15', 'ot2', 'ot3', 'work_days', 'night_days'];
+
+if (isCalendarCollapsed) {
+wrapper.classList.add('collapsed');
+switchWrapper.classList.remove('active');
+document.getElementById('txt_toggle_cal').innerText = t.toggle_cal_off;
+readonlyFields.forEach(id => document.getElementById(id).removeAttribute('readonly'));
+} else {
+wrapper.classList.remove('collapsed');
+switchWrapper.classList.add('active');
+document.getElementById('txt_toggle_cal').innerText = t.toggle_cal_text;
+readonlyFields.forEach(id => document.getElementById(id).setAttribute('readonly', 'readonly'));
+recalculateMonthlyFromDaily();
+}
+saveAndCalculate();
+}
+
+function confirmClearCalendar() {
+const t = translations[currentLang];
+if (confirm(t.confirm_clear_cal)) {
+const periodKeys = new Set(getPeriodDates(
+parseInt(document.getElementById('year-select').value),
+parseInt(document.getElementById('month-select').value)
+).map(dateKey));
+const allDaily = getAllStoredDailyData();
+periodKeys.forEach(k => delete allDaily[k]);
+dailyDataMap = allDaily;
+saveAllStoredDailyData();
+clearCalendarCalculatedInputs();
+if (!isCalendarCollapsed) {
+recalculateMonthlyFromDaily();
+}
+saveAndCalculate();
+}
+}
+
+function confirmClearMonthData() {
+const t = translations[currentLang];
+if (confirm(t.confirm_clear_month)) {
+clearCurrentMonthData();
+}
+}
+
+function confirmClearAllData() {
+const t = translations[currentLang];
+if (confirm(t.confirm_clear_all)) {
+clearAllData();
+}
+}
+
+function clearAllData() {
+const t = translations[currentLang];
+
+const keysToRemove = [];
+for (let i = 0; i < localStorage.length; i++) {
+const key = localStorage.key(i);
+if (key && (key.startsWith(STORAGE_KEY_PREFIX) || key === DAILY_GLOBAL_KEY || key === PERIOD_CUTOFF_KEY)) {
+keysToRemove.push(key);
+}
+}
+keysToRemove.forEach(k => localStorage.removeItem(k));
+
+dailyDataMap = {};
+isCalendarCollapsed = true;
+calendarViewMode = 'grid';
+
+['salary', 'hours', 'ot1', 'ot15', 'ot2', 'ot3', 'work_days', 'travel', 'lang_allowance', 'night_days'].forEach(id => {
+document.getElementById(id).value = '';
+});
+document.getElementById('period-cutoff-day').value = 25;
+
+document.getElementById('month_exp_list').innerHTML = '';
+document.getElementById('month_inc_list').innerHTML = '';
+
+toggleCalendarUI(true);
+renderCalendar();
+calculate();
+calculateYearlySummary();
+updatePeriodInfoBar();
+alert(t.msg_cleared_all);
+}
+
+function openDayModal(date) {
+const newKey = dateKey(date);
+
+// กดวันเดิมซ้ำ = พับ dropdown กลับ
+if (selectedDayKey === newKey && document.getElementById('day-dropdown-panel')) {
+    closeDayModal();
+    return;
+}
+
+selectedDayKey = newKey;
+const yDisplay = currentLang === 'th' ? date.getFullYear() + 543 : date.getFullYear();
+
+// render ก่อน เพื่อสร้างตำแหน่ง dropdown ใต้แถวของวันที่ที่เลือก
+renderCalendar();
+
+document.getElementById('modal-date-title').innerText = `${date.getDate()} ${monthFullNames[currentLang][date.getMonth()]} ${yDisplay}`;
+
+const d = dailyDataMap[selectedDayKey] || {};
+document.getElementById('m_work').checked = !!d.work;
+document.getElementById('m_night').checked = !!d.night;
+document.getElementById('m_ot1').value = d.ot1 || '';
+document.getElementById('m_ot15').value = d.ot15 || '';
+document.getElementById('m_ot2').value = d.ot2 || '';
+document.getElementById('m_ot3').value = d.ot3 || '';
+
+document.getElementById('m_exp_food').value = d.expFood || '';
+document.getElementById('m_exp_commute').value = d.expCommute || '';
+
+const expContainer = document.getElementById('m_exp_list');
+expContainer.innerHTML = '';
+if (d.extraExpenses && Array.isArray(d.extraExpenses)) {
+d.extraExpenses.forEach(item => addModalItem('m_exp_list', item.name, item.amount));
+}
+
+const incContainer = document.getElementById('m_inc_list');
+incContainer.innerHTML = '';
+if (d.extraIncomes && Array.isArray(d.extraIncomes)) {
+d.extraIncomes.forEach(item => addModalItem('m_inc_list', item.name, item.amount));
+}
+
+updateWorkCheckboxState();
+
+// ช่วยให้วันที่และหัว dropdown อยู่ในจอ โดยไม่กระชากหน้าจอ
+const selectedCell = document.querySelector('.cal-day-cell.is-selected, .cal-list-item.is-selected');
+if (selectedCell && typeof selectedCell.scrollIntoView === 'function') {
+    selectedCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+}
+
+function onModalOtChange() {
+const ot1 = parseFloat(document.getElementById('m_ot1').value) || 0;
+const ot15 = parseFloat(document.getElementById('m_ot15').value) || 0;
+const ot2 = parseFloat(document.getElementById('m_ot2').value) || 0;
+const ot3 = parseFloat(document.getElementById('m_ot3').value) || 0;
+
+if (ot1 > 0 || ot15 > 0 || ot2 > 0 || ot3 > 0) {
+document.getElementById('m_work').checked = true;
+}
+updateWorkCheckboxState();
+}
+
+function onNightCheckboxChange() {
+const night = document.getElementById('m_night').checked;
+if (night) {
+document.getElementById('m_work').checked = true;
+}
+updateWorkCheckboxState();
+}
+
+function onWorkCheckboxChange() {
+const work = document.getElementById('m_work').checked;
+const night = document.getElementById('m_night').checked;
+const ot1 = parseFloat(document.getElementById('m_ot1').value) || 0;
+const ot15 = parseFloat(document.getElementById('m_ot15').value) || 0;
+const ot2 = parseFloat(document.getElementById('m_ot2').value) || 0;
+const ot3 = parseFloat(document.getElementById('m_ot3').value) || 0;
+
+if ((night || ot1 > 0 || ot15 > 0 || ot2 > 0 || ot3 > 0) && !work) {
+document.getElementById('m_work').checked = true;
+}
+updateWorkCheckboxState();
+}
+
+function updateWorkCheckboxState() {
+const night = document.getElementById('m_night').checked;
+const ot1 = parseFloat(document.getElementById('m_ot1').value) || 0;
+const ot15 = parseFloat(document.getElementById('m_ot15').value) || 0;
+const ot2 = parseFloat(document.getElementById('m_ot2').value) || 0;
+const ot3 = parseFloat(document.getElementById('m_ot3').value) || 0;
+const workCheckbox = document.getElementById('m_work');
+
+if (night || ot1 > 0 || ot15 > 0 || ot2 > 0 || ot3 > 0) {
+workCheckbox.disabled = true;
+} else {
+workCheckbox.disabled = false;
+}
+}
+
+function addModalItem(containerId, name = '', amount = '') {
+const container = document.getElementById(containerId);
+const itemId = 'item_' + Date.now() + Math.random().toString(36).substr(2, 4);
+const div = document.createElement('div');
+div.className = 'dynamic-item';
+div.id = itemId;
+
+const t = translations[currentLang];
+
+div.innerHTML = `
+<input type="text" placeholder="${t.item_name}" value="${name}">
+<input type="number" inputmode="decimal" placeholder="${t.item_amt}" value="${amount}">
+<button class="btn-del" onclick="document.getElementById('${itemId}').remove()">${t.btn_del}</button>
+`;
+
+container.appendChild(div);
+}
+
+function addMonthItem(containerId, name = '', amount = '') {
+const container = document.getElementById(containerId);
+const itemId = 'm_item_' + Date.now() + Math.random().toString(36).substr(2, 4);
+const div = document.createElement('div');
+div.className = 'dynamic-item';
+div.id = itemId;
+
+const t = translations[currentLang];
+
+div.innerHTML = `
+<input type="text" placeholder="${t.item_name}" value="${name}" oninput="saveAndCalculate()">
+<input type="number" inputmode="decimal" placeholder="${t.item_amt}" value="${amount}" oninput="saveAndCalculate()">
+<button class="btn-del" onclick="document.getElementById('${itemId}').remove(); saveAndCalculate();">${t.btn_del}</button>
+`;
+
+container.appendChild(div);
+}
+
+function clearDayModalData() {
+if (!selectedDayKey) return;
+
+const t = translations[currentLang];
+if (!confirm(t.confirm_clear_day)) return;
+
+// ล้างข้อมูลของวันที่กำลังเปิดอยู่ทันที
+delete dailyDataMap[selectedDayKey];
+saveAllStoredDailyData();
+saveCurrentMonthData();
+
+if (!isCalendarCollapsed) {
+recalculateMonthlyFromDaily();
+}
+
+closeDayModal(true);
+renderCalendar();
+calculate();
+calculateYearlySummary();
+}
+
+function closeDayModal(immediate = false) {
+const panel = document.getElementById('day-dropdown-panel');
+selectedDayKey = null;
+
+if (!panel || immediate) {
+    rehomeDayEditor();
+    renderCalendar();
+    return;
+}
+
+panel.classList.remove('open');
+window.setTimeout(() => {
+    rehomeDayEditor();
+    renderCalendar();
+}, 340);
+}
+
+function saveDayData() {
+if (!selectedDayKey) return;
+
+const work = document.getElementById('m_work').checked;
+const night = document.getElementById('m_night').checked;
+const ot1 = document.getElementById('m_ot1').value;
+const ot15 = document.getElementById('m_ot15').value;
+const ot2 = document.getElementById('m_ot2').value;
+const ot3 = document.getElementById('m_ot3').value;
+const expFood = document.getElementById('m_exp_food').value;
+const expCommute = document.getElementById('m_exp_commute').value;
+
+const extraExpenses = [];
+document.querySelectorAll('#m_exp_list .dynamic-item').forEach(row => {
+const inputs = row.querySelectorAll('input');
+if (inputs[0].value || inputs[1].value) {
+extraExpenses.push({ name: inputs[0].value, amount: inputs[1].value });
+}
+});
+
+const extraIncomes = [];
+document.querySelectorAll('#m_inc_list .dynamic-item').forEach(row => {
+const inputs = row.querySelectorAll('input');
+if (inputs[0].value || inputs[1].value) {
+extraIncomes.push({ name: inputs[0].value, amount: inputs[1].value });
+}
+});
+
+const isEmpty = !work && !night && !ot1 && !ot15 && !ot2 && !ot3 && !expFood && !expCommute &&
+extraExpenses.length === 0 && extraIncomes.length === 0;
+
+if (isEmpty) {
+delete dailyDataMap[selectedDayKey];
+} else {
+dailyDataMap[selectedDayKey] = { work, night, ot1, ot15, ot2, ot3, expFood, expCommute, extraExpenses, extraIncomes };
+}
+
+closeDayModal(true);
+if (!isCalendarCollapsed) {
+recalculateMonthlyFromDaily();
+}
+saveAndCalculate();
+}
+
+function recalculateMonthlyFromDaily() {
+let travelDays = 0;
+let nightDays = 0;
+let sumOt1 = 0, sumOt15 = 0, sumOt2 = 0, sumOt3 = 0;
+const periodData = getDailyDataForCurrentPeriod();
+
+Object.keys(periodData).forEach(key => {
+const d = periodData[key];
+if (d.night) nightDays++;
+
+const o1 = parseFloat(d.ot1) || 0;
+const o15 = parseFloat(d.ot15) || 0;
+const o2 = parseFloat(d.ot2) || 0;
+const o3 = parseFloat(d.ot3) || 0;
+
+sumOt1 += o1;
+sumOt15 += o15;
+sumOt2 += o2;
+sumOt3 += o3;
+
+if (d.work) {
+travelDays++;
+}
+});
+
+document.getElementById('work_days').value = travelDays;
+document.getElementById('night_days').value = nightDays;
+document.getElementById('ot1').value = sumOt1;
+document.getElementById('ot15').value = sumOt15;
+document.getElementById('ot2').value = sumOt2;
+document.getElementById('ot3').value = sumOt3;
+}
+
+function getStorageKey(year, month) {
+return `${STORAGE_KEY_PREFIX}${year}_${month}`;
+}
+
+// รวมข้อมูลรายวันจากทุกเดือนที่เคยบันทึกไว้
+// เพื่อป้องกันข้อมูลหาย/ถูกซ่อนเมื่อเปลี่ยนวันตัดรอบ
+function getAllStoredDailyData() {
+const merged = {};
+
+// ข้อมูลใหม่จะเก็บแยกจากรอบเงินเดือน ทำให้เปลี่ยนวันตัดรอบได้โดยข้อมูลไม่หาย
+try {
+const globalData = JSON.parse(localStorage.getItem(DAILY_GLOBAL_KEY) || '{}');
+if (globalData && typeof globalData === 'object') Object.assign(merged, globalData);
+} catch (e) {}
+
+// รองรับข้อมูลเก่าที่เคยเก็บ dailyDataMap ไว้ในแต่ละเดือน
+for (let i = 0; i < localStorage.length; i++) {
+const key = localStorage.key(i);
+if (!key || !key.startsWith(STORAGE_KEY_PREFIX)) continue;
+try {
+const data = JSON.parse(localStorage.getItem(key) || '{}');
+if (data.dailyDataMap && typeof data.dailyDataMap === 'object') {
+Object.keys(data.dailyDataMap).forEach(dateKeyValue => {
+if (!Object.prototype.hasOwnProperty.call(merged, dateKeyValue)) {
+merged[dateKeyValue] = data.dailyDataMap[dateKeyValue];
+}
+});
+}
+} catch (e) {}
+}
+
+return merged;
+}
+
+function saveAllStoredDailyData() {
+localStorage.setItem(DAILY_GLOBAL_KEY, JSON.stringify(dailyDataMap || {}));
+}
+
+function getDailyDataForCurrentPeriod() {
+const periodDates = getPeriodDates(
+parseInt(document.getElementById('year-select').value),
+parseInt(document.getElementById('month-select').value)
+);
+const result = {};
+periodDates.forEach(d => {
+const key = dateKey(d);
+if (dailyDataMap[key]) result[key] = dailyDataMap[key];
+});
+return result;
+}
+
+function onMonthOrYearChange() {
+selectedDayKey = null;
+loadCurrentMonthData();
+}
+
+function saveAndCalculate() {
+saveCurrentMonthData();
+renderCalendar();
+calculate();
+calculateYearlySummary();
+}
+
+function saveCurrentMonthData() {
+const year = document.getElementById('year-select').value;
+const month = document.getElementById('month-select').value;
+const key = getStorageKey(year, month);
+
+const monthExtraExp = [];
+document.querySelectorAll('#month_exp_list .dynamic-item').forEach(row => {
+const inputs = row.querySelectorAll('input');
+if (inputs[0].value || inputs[1].value) {
+monthExtraExp.push({ name: inputs[0].value, amount: inputs[1].value });
+}
+});
+
+const monthExtraInc = [];
+document.querySelectorAll('#month_inc_list .dynamic-item').forEach(row => {
+const inputs = row.querySelectorAll('input');
+if (inputs[0].value || inputs[1].value) {
+monthExtraInc.push({ name: inputs[0].value, amount: inputs[1].value });
+}
+});
+
+const data = {
+salary: document.getElementById('salary').value,
+hours: document.getElementById('hours').value,
+ot1: document.getElementById('ot1').value,
+ot15: document.getElementById('ot15').value,
+ot2: document.getElementById('ot2').value,
+ot3: document.getElementById('ot3').value,
+work_days: document.getElementById('work_days').value,
+travel: document.getElementById('travel').value,
+lang_allowance: document.getElementById('lang_allowance').value,
+night_days: document.getElementById('night_days').value,
+isCalendarCollapsed: isCalendarCollapsed,
+calendarViewMode: calendarViewMode,
+// เก็บสำเนาเฉพาะข้อมูลรายวันในรอบนี้เท่านั้น
+// ข้อมูลรายวันทั้งหมดเก็บแยกใน DAILY_GLOBAL_KEY อยู่แล้ว
+// ช่วยป้องกันข้อมูลทั้งปีถูกทำสำเนาซ้ำในทุกเดือน
+dailyDataMap: getDailyDataForCurrentPeriod(),
+monthExtraExp: monthExtraExp,
+monthExtraInc: monthExtraInc
+};
+
+localStorage.setItem(key, JSON.stringify(data));
+saveAllStoredDailyData();
+}
+
+function loadCurrentMonthData() {
+const cutoffInput = document.getElementById('period-cutoff-day');
+if (cutoffInput) cutoffInput.value = getPeriodCutoffDay();
+
+const year = document.getElementById('year-select').value;
+const month = document.getElementById('month-select').value;
+const key = getStorageKey(year, month);
+
+const data = JSON.parse(localStorage.getItem(key) || '{}');
+
+// รวมข้อมูลเดิมจากทุก period ก่อน เพื่อให้เปลี่ยนวันตัดรอบแล้วข้อมูลรายวันยังอยู่
+dailyDataMap = getAllStoredDailyData();
+// รองรับข้อมูลเก่า: เติมข้อมูลจาก storage รายเดือนเฉพาะวันที่ที่ global ยังไม่มี
+// ห้ามใช้ snapshot เก่าของเดือนมา override DAILY_GLOBAL_KEY เพราะอาจทำให้ข้อมูลเดือนอื่นย้อนกลับ/ถูกก๊อป
+if (data.dailyDataMap && typeof data.dailyDataMap === 'object') {
+Object.keys(data.dailyDataMap).forEach(key => {
+if (!Object.prototype.hasOwnProperty.call(dailyDataMap, key)) {
+dailyDataMap[key] = data.dailyDataMap[key];
+}
+});
+saveAllStoredDailyData();
+}
+isCalendarCollapsed = data.isCalendarCollapsed !== undefined ? !!data.isCalendarCollapsed : true;
+calendarViewMode = data.calendarViewMode || 'grid';
+
+document.getElementById('salary').value = data.salary || '';
+document.getElementById('hours').value = data.hours || '';
+document.getElementById('travel').value = data.travel || '';
+document.getElementById('lang_allowance').value = data.lang_allowance || '';
+
+const expContainer = document.getElementById('month_exp_list');
+expContainer.innerHTML = '';
+if (data.monthExtraExp && Array.isArray(data.monthExtraExp)) {
+data.monthExtraExp.forEach(item => addMonthItem('month_exp_list', item.name, item.amount));
+}
+
+const incContainer = document.getElementById('month_inc_list');
+incContainer.innerHTML = '';
+if (data.monthExtraInc && Array.isArray(data.monthExtraInc)) {
+data.monthExtraInc.forEach(item => addMonthItem('month_inc_list', item.name, item.amount));
+}
+
+toggleCalendarUI(isCalendarCollapsed);
+
+if (isCalendarCollapsed) {
+document.getElementById('ot1').value = data.ot1 || '';
+document.getElementById('ot15').value = data.ot15 || '';
+document.getElementById('ot2').value = data.ot2 || '';
+document.getElementById('ot3').value = data.ot3 || '';
+document.getElementById('work_days').value = data.work_days || '';
+document.getElementById('night_days').value = data.night_days || '';
+} else {
+recalculateMonthlyFromDaily();
+}
+
+renderCalendar();
+calculate();
+calculateYearlySummary();
+updatePeriodInfoBar();
+}
+
+function clearCurrentMonthData() {
+const t = translations[currentLang];
+const year = document.getElementById('year-select').value;
+const month = document.getElementById('month-select').value;
+const key = getStorageKey(year, month);
+
+// ล้างข้อมูลเฉพาะรอบปัจจุบัน โดยไม่กระทบข้อมูลวันที่อยู่นอกช่วง
+const periodKeys = new Set(getPeriodDates(parseInt(year), parseInt(month)).map(dateKey));
+const allDaily = getAllStoredDailyData();
+periodKeys.forEach(k => delete allDaily[k]);
+dailyDataMap = allDaily;
+saveAllStoredDailyData();
+localStorage.removeItem(key);
+
+['salary', 'hours', 'ot1', 'ot15', 'ot2', 'ot3', 'work_days', 'travel', 'lang_allowance', 'night_days'].forEach(id => {
+document.getElementById(id).value = '';
+});
+
+document.getElementById('month_exp_list').innerHTML = '';
+document.getElementById('month_inc_list').innerHTML = '';
+
+recalculateMonthlyFromDaily();
+renderCalendar();
+calculate();
+calculateYearlySummary();
+alert(t.msg_cleared);
+}
+
+function getNum(id) {
+const el = document.getElementById(id);
+if (!el) return 0;
+const val = parseFloat(el.value);
+return isNaN(val) ? 0 : val;
+}
+
+function formatNum(num) {
+return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function calculateMonthDataFromObj(data, year = null, month = null, dailySourceMap = null) {
+const salary = parseFloat(data.salary) || 0;
+const hoursPerDay = parseFloat(data.hours) || 0;
+const workDays = parseFloat(data.work_days) || 0;
+const travelPerDay = parseFloat(data.travel) || 0;
+const totalTravel = workDays * travelPerDay;
+
+const nightDays = parseFloat(data.night_days) || 0;
+const langAllowance = parseFloat(data.lang_allowance) || 0;
+const totalNight = nightDays * 50;
+
+const ot1 = parseFloat(data.ot1) || 0;
+const ot15 = parseFloat(data.ot15) || 0;
+const ot2 = parseFloat(data.ot2) || 0;
+const ot3 = parseFloat(data.ot3) || 0;
+
+let totalOt = 0;
+if (salary > 0 && hoursPerDay > 0) {
+const hourlyRate = salary / 30 / hoursPerDay;
+totalOt = (hourlyRate * ot1 * 1.0) + (hourlyRate * ot15 * 1.5) + (hourlyRate * ot2 * 2.0) + (hourlyRate * ot3 * 3.0);
+}
+
+let totalExpense = 0;
+let totalExtraInc = 0;
+
+// สำคัญ: ค่าใช้จ่าย/รายรับรายวันต้องคิดเฉพาะวันที่ในรอบของเดือนนั้น
+// เวอร์ชันเก่าเคยบันทึก dailyDataMap ทั้งปีซ้ำในทุก storage key ทำให้สรุปรายปี
+// นำค่าใช้จ่ายชุดเดียวกันไปบวกในหลายเดือน
+let dailyEntries = [];
+if (year !== null && month !== null) {
+const source = (dailySourceMap && typeof dailySourceMap === 'object')
+? dailySourceMap
+: ((data.dailyDataMap && typeof data.dailyDataMap === 'object') ? data.dailyDataMap : {});
+const periodKeys = new Set(getPeriodDates(parseInt(year), parseInt(month)).map(dateKey));
+Object.keys(source).forEach(key => {
+if (periodKeys.has(key) && source[key]) dailyEntries.push(source[key]);
+});
+} else if (data.dailyDataMap && typeof data.dailyDataMap === 'object') {
+dailyEntries = Object.values(data.dailyDataMap);
+}
+
+dailyEntries.forEach(d => {
+totalExpense += (parseFloat(d.expFood) || 0) + (parseFloat(d.expCommute) || 0);
+if (d.extraExpenses && Array.isArray(d.extraExpenses)) {
+d.extraExpenses.forEach(x => totalExpense += (parseFloat(x.amount) || 0));
+}
+if (d.extraIncomes && Array.isArray(d.extraIncomes)) {
+d.extraIncomes.forEach(x => totalExtraInc += (parseFloat(x.amount) || 0));
+}
+});
+
+if (data.monthExtraExp && Array.isArray(data.monthExtraExp)) {
+data.monthExtraExp.forEach(x => totalExpense += (parseFloat(x.amount) || 0));
+}
+
+if (data.monthExtraInc && Array.isArray(data.monthExtraInc)) {
+data.monthExtraInc.forEach(x => totalExtraInc += (parseFloat(x.amount) || 0));
+}
+
+if (salary <= 0 || hoursPerDay <= 0) {
+return { income: totalExtraInc, ss: 0, expense: totalExpense, net: totalExtraInc - totalExpense };
+}
+
+const socialSecurity = Math.min(salary * 0.05, 875.0);
+const totalIncome = salary + totalOt + totalTravel + totalNight + langAllowance + totalExtraInc;
+const net = totalIncome - socialSecurity - totalExpense;
+
+return { income: totalIncome, ss: socialSecurity, expense: totalExpense, net: net };
+}
+
+function renderBreakdowns() {
+const t = translations[currentLang];
+const expCategoryMap = {};
+const incCategoryMap = {};
+
+let sumFood = 0;
+let sumCommute = 0;
+
+Object.values(getDailyDataForCurrentPeriod()).forEach(d => {
+sumFood += (parseFloat(d.expFood) || 0);
+sumCommute += (parseFloat(d.expCommute) || 0);
+
+if (d.extraExpenses && Array.isArray(d.extraExpenses)) {
+d.extraExpenses.forEach(x => {
+const name = (x.name || '').trim() || 'อื่นๆ';
+const amt = parseFloat(x.amount) || 0;
+expCategoryMap[name] = (expCategoryMap[name] || 0) + amt;
+});
+}
+
+if (d.extraIncomes && Array.isArray(d.extraIncomes)) {
+d.extraIncomes.forEach(x => {
+const name = (x.name || '').trim() || 'อื่นๆ';
+const amt = parseFloat(x.amount) || 0;
+incCategoryMap[name] = (incCategoryMap[name] || 0) + amt;
+});
+}
+});
+
+if (sumFood > 0) expCategoryMap[t.food_default] = (expCategoryMap[t.food_default] || 0) + sumFood;
+if (sumCommute > 0) expCategoryMap[t.commute_default] = (expCategoryMap[t.commute_default] || 0) + sumCommute;
+
+document.querySelectorAll('#month_exp_list .dynamic-item').forEach(row => {
+const inputs = row.querySelectorAll('input');
+const name = (inputs[0].value || '').trim() || 'อื่นๆ';
+const amt = parseFloat(inputs[1].value) || 0;
+if (amt > 0) expCategoryMap[name] = (expCategoryMap[name] || 0) + amt;
+});
+
+document.querySelectorAll('#month_inc_list .dynamic-item').forEach(row => {
+const inputs = row.querySelectorAll('input');
+const name = (inputs[0].value || '').trim() || 'อื่นๆ';
+const amt = parseFloat(inputs[1].value) || 0;
+if (amt > 0) incCategoryMap[name] = (incCategoryMap[name] || 0) + amt;
+});
+
+const listExp = document.getElementById('list_bd_exp');
+listExp.innerHTML = '';
+let totalExpSum = 0;
+Object.keys(expCategoryMap).forEach(key => {
+const amt = expCategoryMap[key];
+totalExpSum += amt;
+const row = document.createElement('div');
+row.className = 'breakdown-row';
+row.innerHTML = `<span>${key}</span><span style="font-weight:600; color:var(--danger-color);">${formatNum(amt)}</span>`;
+listExp.appendChild(row);
+});
+document.getElementById('lbl_sum_bd_exp').innerText = `${formatNum(totalExpSum)}${t.currency}`;
+
+const listInc = document.getElementById('list_bd_inc');
+listInc.innerHTML = '';
+let totalIncSum = 0;
+Object.keys(incCategoryMap).forEach(key => {
+const amt = incCategoryMap[key];
+totalIncSum += amt;
+const row = document.createElement('div');
+row.className = 'breakdown-row';
+row.innerHTML = `<span>${key}</span><span style="font-weight:600; color:var(--success-color);">${formatNum(amt)}</span>`;
+listInc.appendChild(row);
+});
+document.getElementById('lbl_sum_bd_inc').innerText = `${formatNum(totalIncSum)}${t.currency}`;
+
+return { totalExpSum, totalIncSum };
+}
+
+function calculate() {
+const t = translations[currentLang];
+
+const salary = getNum('salary');
+const hoursPerDay = getNum('hours');
+
+const workDays = getNum('work_days');
+const travelPerDay = getNum('travel');
+const totalTravel = workDays * travelPerDay;
+
+const nightDays = getNum('night_days');
+const langAllowance = getNum('lang_allowance');
+const totalNight = nightDays * 50;
+
+const ot1 = getNum('ot1');
+const ot15 = getNum('ot15');
+const ot2 = getNum('ot2');
+const ot3 = getNum('ot3');
+
+let moneyOt1 = 0, moneyOt15 = 0, moneyOt2 = 0, moneyOt3 = 0, totalOt = 0;
+
+if (salary > 0 && hoursPerDay > 0) {
+const hourlyRate = salary / 30 / hoursPerDay;
+moneyOt1 = hourlyRate * ot1 * 1.0;
+moneyOt15 = hourlyRate * ot15 * 1.5;
+moneyOt2 = hourlyRate * ot2 * 2.0;
+moneyOt3 = hourlyRate * ot3 * 3.0;
+totalOt = moneyOt1 + moneyOt15 + moneyOt2 + moneyOt3;
+}
+
+const breakdowns = renderBreakdowns();
+const totalExpense = breakdowns.totalExpSum;
+const totalExtraInc = breakdowns.totalIncSum;
+
+const totalExtraCombined = langAllowance + totalNight + totalExtraInc;
+
+document.getElementById('lbl_base_preview').innerText = `${t.total_prefix}${formatNum(salary)}${t.currency}`;
+document.getElementById('lbl_ot_preview').innerText = `${t.total_prefix}${formatNum(totalOt)}${t.currency}`;
+document.getElementById('lbl_travel_preview').innerText = `${t.total_prefix}${formatNum(totalTravel)}${t.currency}`;
+document.getElementById('lbl_extra_preview').innerText = `${t.total_prefix}${formatNum(totalExtraCombined)}${t.currency}`;
+
+/*
+ * IMPORTANT:
+ * หัวข้อ 3 ใช้เงินที่ได้รับจากรอบเดือนที่แล้วเป็นเงินตั้งต้น
+ * เพราะเงินเดือนของรอบปัจจุบันจะถูกนำไปใช้ในเดือนถัดไป
+ *
+ * ตัวอย่าง:
+ * เลือก ส.ค. -> ใช้รายได้จากรอบ ก.ค. เป็นเงินสำหรับใช้จ่ายใน ส.ค.
+ */
+const currentYear = parseInt(document.getElementById('year-select').value);
+const currentMonth = parseInt(document.getElementById('month-select').value);
+const previous = getPreviousMonthLabel(currentYear, currentMonth);
+const previousKey = getStorageKey(previous.year, previous.month);
+const previousData = JSON.parse(localStorage.getItem(previousKey) || '{}');
+const allDailyForPrevious = getAllStoredDailyData();
+const previousResult = calculateMonthDataFromObj(previousData, previous.year, previous.month, allDailyForPrevious);
+
+// เงินที่ได้รับจริงจากรอบก่อน = รายได้ทั้งหมดของรอบก่อน - ประกันสังคม
+// ไม่หักค่าใช้จ่ายของรอบก่อน เพราะค่าใช้จ่ายเหล่านั้นเป็นของเดือนก่อน
+const previousNetIncome = previousResult.income - previousResult.ss;
+const spendingBalance = previousNetIncome - totalExpense;
+
+// ส่วนรายละเอียดด้านบนยังคงแสดงข้อมูลของรอบที่กำลังเลือก
+if (salary > 0 && hoursPerDay > 0) {
+const socialSecurity = Math.min(salary * 0.05, 875.0);
+const totalIncome = salary + totalOt + totalTravel + totalNight + langAllowance + totalExtraInc;
+const totalDeduct = socialSecurity + totalExpense;
+
+document.getElementById('lbl_salary').innerText = formatNum(salary);
+document.getElementById('lbl_lang').innerText = formatNum(langAllowance);
+document.getElementById('lbl_ot').innerText = formatNum(totalOt);
+document.getElementById('lbl_ot_detail').innerText =
+`x1.0: ${formatNum(moneyOt1)} | x1.5: ${formatNum(moneyOt15)} | x2.0: ${formatNum(moneyOt2)} | x3.0: ${formatNum(moneyOt3)}`;
+document.getElementById('lbl_travel').innerText = formatNum(totalTravel);
+document.getElementById('lbl_night').innerText = formatNum(totalNight);
+document.getElementById('lbl_daily_inc').innerText = formatNum(totalExtraInc);
+document.getElementById('lbl_total_income').innerText = formatNum(totalIncome);
+
+document.getElementById('lbl_ss').innerText = '-' + formatNum(socialSecurity);
+document.getElementById('lbl_expense').innerText = '-' + formatNum(totalExpense);
+document.getElementById('lbl_total_deduct').innerText = '-' + formatNum(totalDeduct);
+} else {
+// ไม่มีข้อมูลรายได้ของรอบปัจจุบัน แต่ยังสามารถคำนวณเงินใช้จ่ายจากรอบก่อนหน้าได้
+document.getElementById('lbl_salary').innerText = '-';
+document.getElementById('lbl_lang').innerText = '-';
+document.getElementById('lbl_ot').innerText = '-';
+document.getElementById('lbl_ot_detail').innerText = '-';
+document.getElementById('lbl_travel').innerText = '-';
+document.getElementById('lbl_night').innerText = '-';
+document.getElementById('lbl_daily_inc').innerText = '-';
+document.getElementById('lbl_total_income').innerText = '-';
+document.getElementById('lbl_ss').innerText = '-';
+document.getElementById('lbl_expense').innerText = '-' + formatNum(totalExpense);
+document.getElementById('lbl_total_deduct').innerText = '-';
+}
+
+// หัวข้อ 3: ใช้รายได้จากรอบเดือนที่แล้ว
+document.getElementById('lbl_card_net_inc').innerText = formatNum(previousNetIncome) + t.currency;
+document.getElementById('lbl_card_net_deduct').innerText = '-' + formatNum(totalExpense) + t.currency;
+
+const cardNetFinal = document.getElementById('lbl_card_net_final');
+cardNetFinal.innerText = formatNum(spendingBalance) + t.currency;
+cardNetFinal.style.color = spendingBalance >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
+}
+
+function getPreviousMonthLabel(year, month) {
+let pm = month - 1;
+let py = year;
+
+if (pm < 0) {
+pm = 11;
+py -= 1;
+}
+
+return { year: py, month: pm };
+}
+
+function calculateYearlySummary() {
+const year = parseInt(document.getElementById('year-select').value);
+const tbody = document.getElementById('yearly-table-body');
+tbody.innerHTML = '';
+
+/*
+ * หัวข้อ 4 ต้องใช้หลักเดียวกับหัวข้อ 3
+ * เดือนที่แสดง = เดือนที่นำเงินมาใช้
+ * รายรับของเดือนนั้น = รายรับจากรอบเดือนก่อนหน้า
+ * ประกันสังคม = ประกันสังคมของรอบเดือนก่อนหน้า
+ * รายจ่าย = รายจ่ายของเดือนที่แสดง
+ * คงเหลือ = รายรับรอบก่อน - ประกันสังคมรอบก่อน - รายจ่ายเดือนนี้
+ */
+let yearIncome = 0, yearSs = 0, yearExpense = 0, yearNet = 0;
+const chartData = [];
+const allDaily = getAllStoredDailyData();
+
+monthNames[currentLang].forEach((mName, mIdx) => {
+// ค่าใช้จ่ายของเดือนที่กำลังสรุป
+const currentKey = getStorageKey(year, mIdx);
+const currentData = JSON.parse(localStorage.getItem(currentKey) || '{}');
+const currentResult = calculateMonthDataFromObj(currentData, year, mIdx, allDaily);
+
+// รายได้ที่นำมาใช้ในเดือนนี้ ต้องมาจากรอบเดือนก่อนหน้า
+const previous = getPreviousMonthLabel(year, mIdx);
+const previousKey = getStorageKey(previous.year, previous.month);
+const previousData = JSON.parse(localStorage.getItem(previousKey) || '{}');
+const previousResult = calculateMonthDataFromObj(previousData, previous.year, previous.month, allDaily);
+
+const receivedGross = previousResult.income;
+const receivedSs = previousResult.ss;
+const currentExpense = currentResult.expense;
+const spendingNet = receivedGross - receivedSs - currentExpense;
+
+yearIncome += receivedGross;
+yearSs += receivedSs;
+yearExpense += currentExpense;
+yearNet += spendingNet;
+
+chartData.push({
+month: mName,
+income: receivedGross,
+expense: currentExpense + receivedSs,
+net: spendingNet
+});
+
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td><strong>${mName}</strong></td>
+<td>${formatNum(receivedGross)}</td>
+<td style="color:var(--danger-color);">${receivedSs > 0 ? '-' + formatNum(receivedSs) : '0.00'}</td>
+<td style="color:var(--danger-color);">${currentExpense > 0 ? '-' + formatNum(currentExpense) : '0.00'}</td>
+<td style="font-weight:700; color:${spendingNet >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${formatNum(spendingNet)}</td>
+`;
+tbody.appendChild(tr);
+});
+
+document.getElementById('y_val_income').innerText = formatNum(yearIncome);
+document.getElementById('y_val_ss').innerText = '-' + formatNum(yearSs);
+document.getElementById('y_val_expense').innerText = formatNum(yearExpense);
+
+const yNetEl = document.getElementById('y_val_net');
+yNetEl.innerText = formatNum(yearNet);
+yNetEl.style.color = yearNet >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
+
+const yearLabel = currentLang === 'th' ? `ปี ${year + 543}` : `Year ${year}`;
+document.getElementById('lbl_yearly_title_year').innerText = `(${yearLabel})`;
+
+renderYearlyChart(chartData);
+}
+
+function renderYearlyChart(data) {
+const canvas = document.getElementById('yearlyChart');
+if (!canvas) return;
+const ctx = canvas.getContext('2d');
+
+const dpr = window.devicePixelRatio || 1;
+const rect = canvas.getBoundingClientRect();
+canvas.width = rect.width * dpr;
+canvas.height = rect.height * dpr;
+ctx.scale(dpr, dpr);
+
+const width = rect.width;
+const height = rect.height;
+
+ctx.clearRect(0, 0, width, height);
+
+let maxVal = 1000;
+data.forEach(d => {
+if (d.income > maxVal) maxVal = d.income;
+if (d.expense > maxVal) maxVal = d.expense;
+if (Math.abs(d.net) > maxVal) maxVal = Math.abs(d.net);
+});
+maxVal = maxVal * 1.15;
+
+const paddingBottom = 26;
+const paddingTop = 12;
+const paddingLeft = 45;
+const chartWidth = width - paddingLeft - 8;
+const chartHeight = height - paddingBottom - paddingTop;
+const monthWidth = chartWidth / 12;
+const barWidth = Math.max(monthWidth / 4.5, 2.0);
+
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+const textColor = isDark ? '#94a3b8' : '#64748b';
+const borderColor = isDark ? '#334155' : '#cbd5e1';
+
+ctx.strokeStyle = borderColor;
+ctx.lineWidth = 1;
+ctx.beginPath();
+ctx.moveTo(paddingLeft, paddingTop);
+ctx.lineTo(paddingLeft, height - paddingBottom);
+ctx.lineTo(width - 8, height - paddingBottom);
+ctx.stroke();
+
+function formatAxisLabel(val) {
+if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+if (val >= 1000) return (val / 1000).toFixed(0) + 'k';
+return val.toFixed(0);
+}
+
+ctx.fillStyle = textColor;
+ctx.font = '9px PK Samut Sakhon, sans-serif';
+ctx.textAlign = 'right';
+
+[0, 0.5, 1].forEach(ratio => {
+const val = maxVal * ratio;
+const yPos = (height - paddingBottom) - (chartHeight * ratio);
+ctx.fillText(formatAxisLabel(val), paddingLeft - 4, yPos + 3);
+
+if (ratio > 0) {
+ctx.save();
+ctx.strokeStyle = isDark ? '#1e293b' : '#f1f5f9';
+ctx.beginPath();
+ctx.moveTo(paddingLeft, yPos);
+ctx.lineTo(width - 8, yPos);
+ctx.stroke();
+ctx.restore();
+}
+});
+
+data.forEach((d, i) => {
+const centerX = paddingLeft + (i * monthWidth) + (monthWidth / 2);
+
+ctx.fillStyle = textColor;
+ctx.font = '10px PK Samut Sakhon, sans-serif';
+ctx.textAlign = 'center';
+ctx.fillText(d.month, centerX, height - 8);
+
+const hInc = (d.income / maxVal) * chartHeight;
+ctx.fillStyle = '#16a34a';
+ctx.fillRect(centerX - (barWidth * 1.2), (height - paddingBottom) - hInc, barWidth, hInc);
+
+const hExp = (d.expense / maxVal) * chartHeight;
+ctx.fillStyle = '#dc2626';
+ctx.fillRect(centerX - (barWidth * 0.1), (height - paddingBottom) - hExp, barWidth, hExp);
+
+const hNet = (Math.abs(d.net) / maxVal) * chartHeight;
+ctx.fillStyle = d.net >= 0 ? '#2563eb' : '#991b1b';
+ctx.fillRect(centerX + (barWidth * 1.0), (height - paddingBottom) - hNet, barWidth, hNet);
+});
+}
+
+function clearSummary() {
+['lbl_salary','lbl_lang','lbl_ot','lbl_ot_detail','lbl_travel','lbl_night','lbl_daily_inc','lbl_total_income','lbl_ss','lbl_expense','lbl_total_deduct','lbl_card_net_inc','lbl_card_net_deduct','lbl_card_net_final'].forEach(id => {
+const el = document.getElementById(id);
+if (el) el.innerText = '-';
+});
+}
+
+initYearMonthDropdowns();
+loadCurrentMonthData();
+</script>
+</body>
+</html>
